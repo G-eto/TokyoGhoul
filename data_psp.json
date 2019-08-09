@@ -1,0 +1,31 @@
+{
+    "Psp": [
+        {
+            "title": "测试1",
+            "kind": "攻略",
+            "time": "2019/8/9 23:52",
+            "author": "eto",
+            "content": "这是一条测试数据\nthis is a test data",
+            "id": 1,
+            "edition": 1
+        },
+        {
+            "title": "测试1",
+            "kind": "攻略",
+            "time": "2019/8/9 23:52",
+            "author": "eto",
+            "content": "这是一条测试数据\nthis is a test data",
+            "id": 2,
+            "edition": 1
+        },
+        {
+            "title": "测试1",
+            "kind": "攻略",
+            "time": "2019/8/9 23:52",
+            "author": "eto",
+            "content": "这是一条测试数据\nthis is a test data",
+            "id": 3,
+            "edition": 1
+        }
+    ]
+}
