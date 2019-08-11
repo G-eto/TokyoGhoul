@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_you"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/menu_home" />
+        <item
+            android:id="@+id/nav_data"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="数据投稿" />
+        <item
+            android:id="@+id/nav_advice"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="反馈建议" />
+        <item
+            android:id="@+id/nav_bug"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="BUG提醒" />
+        <item
+            android:id="@+id/nav_share"
+            android:icon="@drawable/ic_menu_share"
+            android:title="@string/menu_share" />
+    </group>
+
+    <item android:title="Disclaimer">
+        <menu>
+            <item
+                android:id="@+id/nav_protocol"
+                android:icon="@drawable/ic_menu_gallery"
+                android:title="服务协议" />
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_menu_send"
+                android:title="关于" />
+        </menu>
+    </item>
+
+</menu>

@@ -1,0 +1,640 @@
+package com.example.tokyoghoul.activity;
+
+import android.app.SearchManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.support.v7.widget.SearchView;
+import android.widget.Adapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.tokyoghoul.R;
+
+import com.example.tokyoghoul.activity.dummy.DummyContent;
+import com.example.tokyoghoul.database.DatabaseHelper;
+import com.example.tokyoghoul.database.model.Psp;
+import com.example.tokyoghoul.tool.DateUtil;
+import com.example.tokyoghoul.tool.Gadget;
+import com.example.tokyoghoul.tool.HtmlService;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+/**
+ * An activity representing a list of Items. This activity
+ * has different presentations for handset and tablet-size devices. On
+ * handsets, the activity presents a list of items, which when touched,
+ * lead to a {@link ItemDetailActivity} representing
+ * item details. On tablets, the activity presents the list of items and
+ * item details side-by-side using two vertical panes.
+ */
+public class ItemListActivity extends AppCompatActivity {
+
+    /**
+     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
+     * device.
+     */
+    private boolean mTwoPane;
+    private static String mark = "";
+    private static int mark_id = -1;
+    private String[] way = new String[]{"record", "psp", "play", "cdk"};
+    DatabaseHelper db;
+    public static RecyclerView recyclerView;
+
+    String jsondata = "";
+
+    private static ClipboardManager cm;
+    private static ClipData mClipData;
+
+    private SimpleItemRecyclerViewAdapter adapter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_item_list);
+        getWindow().setStatusBarColor(Color.parseColor("#008577"));
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle(getTitle());
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Bundle extras = getIntent().getExtras();
+        if(extras != null){
+            mark = extras.getString("way");
+        }
+
+
+
+        //获取剪贴板管理器：
+        cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        db = new DatabaseHelper(this);
+//        db.insertPsp(new Psp("手抄测试","类型","2019/8/9 22:29","monkey",
+//                "zhehsiyegshk被打开了法国军队进攻和贷款机构和可见光会计法规和"));
+        if (findViewById(R.id.item_detail_container) != null) {
+            // The detail container view will be present only in the
+            // large-screen layouts (res/values-w900dp).
+            // If this view is present, then the
+            // activity should be in two-pane mode.
+            mTwoPane = true;
+        }
+
+        recyclerView = findViewById(R.id.item_list);
+        assert recyclerView != null;
+        setupRecyclerView((RecyclerView) recyclerView);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        if(mark_id == 0) {
+            getMenuInflater().inflate(R.menu.main, menu);
+// Get the SearchView and set the searchable configuration
+//            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+//            SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+//            // Assumes current activity is the searchable activity
+//            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+            SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    DummyContent.ITEMS.clear();
+                    List<Psp> list = db.selectPsps(s);
+                    for(int i = 0; i < list.size(); i++) {
+                        DummyContent.ITEMS.add(new DummyContent.DummyItem(
+                                list.get(i).getId()+"", list.get(i).getPsp_title(),
+                                list.get(i).getPsp_kind(), list.get(i).getPsp_time(),
+                                list.get(i).getPsp_author(), list.get(i).getPsp_text()));
+                    }
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    DummyContent.ITEMS.clear();
+                    List<Psp> list = db.selectPsps(s);
+                    for(int i = 0; i < list.size(); i++) {
+                        DummyContent.ITEMS.add(new DummyContent.DummyItem(
+                                list.get(i).getId()+"", list.get(i).getPsp_title(),
+                                list.get(i).getPsp_kind(), list.get(i).getPsp_time(),
+                                list.get(i).getPsp_author(), list.get(i).getPsp_text()));
+                    }
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                    return false;
+                }
+            });
+            //add
+
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_search) {
+            //return true;
+        }
+        else if(id == android.R.id.home){
+            finish();
+        }
+        else if(id == R.id.action_todo){
+            //add
+            showNoteDialog(false, new Psp(), recyclerView, 0);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+
+
+    private void setupRecyclerView(@NonNull final RecyclerView recyclerView) {
+
+        //record 本地
+        if(mark.equals(way[0])){
+            DummyContent.ITEMS.clear();
+            mark_id = 0;
+            List<Psp> list = db.getAllPsps();
+            for(int i = 0; i < list.size(); i++) {
+                DummyContent.ITEMS.add(new DummyContent.DummyItem(
+                        list.get(i).getId()+"", list.get(i).getPsp_title(),
+                        list.get(i).getPsp_kind(), list.get(i).getPsp_time(),
+                        list.get(i).getPsp_author(), list.get(i).getPsp_text()));
+            }
+            adapter = new SimpleItemRecyclerViewAdapter(this, DummyContent.ITEMS, mTwoPane, mark_id);
+
+        }
+        //psp json
+        else{
+            DummyContent.ITEMS.clear();
+            Thread thread=new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String url = "";
+                    if(mark.equals(way[1])){
+                        mark_id = 1;
+                        url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_psp.json";
+                    }
+                    //play
+                    else if(mark.equals(way[2])){
+                        mark_id = 2;
+                        url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_activity.json";
+                    }
+                    //cdk
+                    else if(mark.equals(way[3])){
+                        mark_id = 3;
+                        url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_cdk.json";
+                    }
+
+                    int op = 0;
+                    while (jsondata.equals("")) {
+                        if(++op > 10){
+                            Log.d("请求失败","try 10 times");
+                            break;
+                        }
+                        try {
+                            jsondata = HtmlService.getHtml(url);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    DummyContent.ITEMS.addAll(getJson(jsondata));
+                    DummyContent.setVisitFlag(false);
+
+                }
+
+
+            });
+            DummyContent.setVisitFlag(true);
+            thread.start();
+            int op = 0;
+            while (DummyContent.isVisit()){
+//                if(op == 100){
+//                    Log.d("deflut","jsondate weijiuxu");
+//                    break;
+//                }
+            }
+            adapter = new SimpleItemRecyclerViewAdapter(this, DummyContent.ITEMS, mTwoPane, mark_id);
+            //recyclerView.setAdapter(adapter);
+        }
+
+
+        adapter.setOnitemClickLintener(new SimpleItemRecyclerViewAdapter.OnitemClick() {
+            @Override
+            public void onItemClick(int position) {
+                //Toast.makeText(ItemListActivity.this,"点击了一下"+position,Toast.LENGTH_SHORT).show();
+                DummyContent.DummyItem item = DummyContent.ITEMS.get(position);
+
+                if(mark_id == 3){
+                    //copy// 创建普通字符型ClipData
+                    mClipData = ClipData.newPlainText("Label", item.title);
+                    Log.d("copy", item.detail);
+                    // 将ClipData内容放到系统剪贴板里。
+                    cm.setPrimaryClip(mClipData);
+//                    Gadget.showToast("复制成功"+item.title, ItemListActivity.this);
+                }
+                else {
+                    if (mTwoPane) {
+                        Bundle arguments = new Bundle();
+                        arguments.putString(ItemDetailFragment.ARG_ITEM_ID, item.id);
+                        ItemDetailFragment fragment = new ItemDetailFragment();
+                        fragment.setArguments(arguments);
+                        ItemListActivity.this.getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.item_detail_container, fragment)
+                                .commit();
+                    } else {
+                        Context context = recyclerView.getContext();
+                        Intent intent = new Intent(recyclerView.getContext(), ItemDetailActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("id", Integer.parseInt(item.id));
+                        bundle.putString("title", item.toString());
+                        bundle.putString("detail", item.detail);
+                        boolean isUrl = false;
+                        //约定版本号为零且为web者是url
+                        if(DummyContent.ITEMS.get(position).web_edition == 0
+                                        && DummyContent.ITEMS.get(position).web_id > 0){
+                            isUrl = true;
+                        }
+                        bundle.putBoolean("isUrl", isUrl);
+
+                        intent.putExtras(bundle);
+
+                        context.startActivity(intent);
+                    }
+                }
+            }
+        });
+
+        adapter.setOnLongClickListener(new SimpleItemRecyclerViewAdapter.OnLongClick() {
+            @Override
+            public void onLongClick(int position) {
+                Toast.makeText(ItemListActivity.this,"长按了一下"+position, Toast.LENGTH_SHORT).show();
+            }
+        });
+        recyclerView.setAdapter(adapter);
+    }
+
+    public static class SimpleItemRecyclerViewAdapter
+            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
+
+        private final ItemListActivity mParentActivity;
+        private final List<DummyContent.DummyItem> mValues;
+        private final boolean mTwoPane;
+        private final int mark_way;
+        private OnitemClick onitemClick;   //定义点击事件接口
+        private OnLongClick onLongClick;  //定义长按事件接口
+        private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DummyContent.DummyItem item = (DummyContent.DummyItem) view.getTag();
+                if (mTwoPane) {
+                    Bundle arguments = new Bundle();
+                    arguments.putString(ItemDetailFragment.ARG_ITEM_ID, item.id);
+                    ItemDetailFragment fragment = new ItemDetailFragment();
+                    fragment.setArguments(arguments);
+                    mParentActivity.getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.item_detail_container, fragment)
+                            .commit();
+                } else {
+                    Context context = view.getContext();
+                    Intent intent = new Intent(context, ItemDetailActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("id", Integer.parseInt(item.id));
+                    bundle.putString("title", item.toString());
+                    bundle.putString("detail", item.detail);
+
+                    intent.putExtras(bundle);
+
+                    context.startActivity(intent);
+                }
+            }
+
+        };
+
+        //定义设置点击事件监听的方法
+        public void setOnitemClickLintener (OnitemClick onitemClick) {
+            this.onitemClick = onitemClick;
+        }
+        //定义设置长按事件监听的方法
+        public void setOnLongClickListener (OnLongClick onLongClick) {
+            this.onLongClick = onLongClick;
+        }
+
+        //定义一个点击事件的接口
+        public interface OnitemClick {
+            void onItemClick(int position);
+        }
+        //定义一个长按事件的接口
+        public interface OnLongClick {
+            void onLongClick(int position);
+        }
+
+        SimpleItemRecyclerViewAdapter(ItemListActivity parent,
+                                      List<DummyContent.DummyItem> items,
+                                      boolean twoPane, int way) {
+            mValues = items;
+            mParentActivity = parent;
+            mTwoPane = twoPane;
+            mark_way = way;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_list_content, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
+            holder.mTitle.setText(mValues.get(position).title);
+            holder.mKind.setText(mValues.get(position).kind);
+            holder.mText_1.setText(mValues.get(position).under_1);
+            holder.mText_2.setText(mValues.get(position).under_2);
+
+            if (onitemClick != null) {
+                holder.item_relativelytout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //在TextView的地方进行监听点击事件，并且实现接口
+                        onitemClick.onItemClick(holder.getAdapterPosition());
+                    }
+                });
+            }
+
+            if (onLongClick != null) {
+                holder.item_relativelytout.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        //在TextView的地方进行长按事件的监听，并实现长按接口
+                        onLongClick.onLongClick(holder.getAdapterPosition());
+                        return true;
+                    }
+                });
+            }
+
+            if(mark_id == 0){
+                holder.delete.setVisibility(View.VISIBLE);
+
+                if(DummyContent.ITEMS.get(holder.getAdapterPosition()).web_id > 0 &&
+                        DummyContent.ITEMS.get(holder.getAdapterPosition()).web_edition == 0) {
+                    //holder.update.setVisibility(View.GONE);
+                }
+                else
+                    holder.update.setVisibility(View.VISIBLE);
+                holder.delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int op_id = holder.getAdapterPosition();
+                        DatabaseHelper databaseHelper = new DatabaseHelper(recyclerView.getContext());
+                        databaseHelper.deletePsp(Integer.parseInt(mValues.get(op_id).id));
+                        Gadget.showToast("已删除", view.getContext());
+                        DummyContent.ITEMS.remove(op_id);
+                        recyclerView.getAdapter().notifyItemRemoved(op_id);
+                    }
+                });
+                holder.update.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int op_id = holder.getAdapterPosition();
+                        DatabaseHelper databaseHelper = new DatabaseHelper(recyclerView.getContext());
+                        showNoteDialog(true,
+                                databaseHelper.getPsp(Integer.parseInt(DummyContent.ITEMS.get(op_id).id)),
+                                view, position);
+                    }
+                });
+            }
+            else if(mark_id == 1){
+                holder.star.setVisibility(View.VISIBLE);
+                holder.star.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DatabaseHelper databaseHelper = new DatabaseHelper(view.getContext());
+                        databaseHelper.insertPsp(mValues.get(holder.getAdapterPosition()).toPsp());
+//                        ((CstSwipeDelMenu) holder.itemView).quickClose();
+                    }
+                });
+            }
+
+
+
+            //holder.itemView.setTag(mValues.get(position));
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return mValues.size();
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            final TextView mTitle;
+            final TextView mKind;
+            final TextView mText_1;
+            final TextView mText_2;
+            final Button delete;
+            final Button update;
+            final Button star;
+            final RelativeLayout item_relativelytout;
+
+            ViewHolder(View view) {
+                super(view);
+                mTitle = (TextView) view.findViewById(R.id.item_title);
+                mKind = (TextView) view.findViewById(R.id.item_kind);
+                mText_1 = view.findViewById(R.id.item_under_1);
+                mText_2 = view.findViewById(R.id.item_under_2);
+                delete = view.findViewById(R.id.btnDelete);
+                update = view.findViewById(R.id.btnUpdate);
+                star = view.findViewById(R.id.btnStar);
+                item_relativelytout = view.findViewById(R.id.item_relativelytout);
+            }
+        }
+    }
+
+
+    public static List<DummyContent.DummyItem> getJson(String jsonStr){
+        JSONObject dataJson = null;
+        List<DummyContent.DummyItem> list = new ArrayList<>();
+        Log.d("sss:",jsonStr);
+        try {
+            dataJson = new JSONObject(jsonStr);
+//            JSONObject response=dataJson.getJSONObject("");
+            if(mark_id == 1){
+                JSONArray data=dataJson.getJSONArray("Psp");
+                for(int i = 0; i < data.length(); i++) {
+                    JSONObject info = data.getJSONObject(i);
+                    String title = info.getString("title");
+                    String kind = info.getString("kind");
+                    String time = info.getString("time");
+                    String author = info.getString("author");
+                    String content = info.getString("content");
+                    int id = info.getInt("id");
+                    int edition = info.getInt("edition");
+                    System.out.println(title + time + kind + author + content);
+                    list.add(new DummyContent.DummyItem(String.valueOf(id), title, kind, author, time, content, id, edition));
+                }
+            }
+            //play
+            else if(mark_id == 2){
+                JSONArray data=dataJson.getJSONArray("Activity");
+                for(int i = 0; i < data.length(); i++) {
+                    JSONObject info = data.getJSONObject(i);
+                    String title = info.getString("title");
+                    String kind = info.getString("kind");
+                    String time_s = info.getString("time_start");
+                    String time_e = info.getString("time_end");
+                    String content = info.getString("content");
+                    int id = info.getInt("id");
+                    System.out.println(title + time_s + kind + time_e + content);
+                    list.add(new DummyContent.DummyItem(String.valueOf(id), title, kind, time_s, time_e, content, id, 0));
+                }
+            }
+            else if(mark_id == 3){
+                JSONArray data=dataJson.getJSONArray("CDK");
+                for(int i = 0; i < data.length(); i++) {
+                    JSONObject info = data.getJSONObject(i);
+                    int id = info.getInt("id");
+                    String cdk = info.getString("cdk");
+                    String date = info.getString("date");
+                    String content = info.getString("content");
+
+
+//                    System.out.println(title + time + kind + author + content);
+                    list.add(new DummyContent.DummyItem(String.valueOf(id), cdk, content, date));
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+
+    public static String run(String url){
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            return response.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void showNoteDialog(final boolean shouldUpdate, final Psp psp, final View _view, final int position) {
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from((_view.getContext()));
+        final View view = layoutInflaterAndroid.inflate(R.layout.dialog_record, null);
+
+        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(view.getContext());
+        alertDialogBuilderUserInput.setView(view);
+
+        final EditText inputTitle = view.findViewById(R.id.input_record_title);
+        final EditText inputKind = view.findViewById(R.id.input_record_kind);
+        final EditText inputText = view.findViewById(R.id.input_record_text);
+        final Button cancel = view.findViewById(R.id.dialog_record_cancel);
+        final Button save = view.findViewById(R.id.dialog_record_save);
+
+        save.setHint(!shouldUpdate ? "保存" : "修改");
+
+        if (shouldUpdate && psp.getId() > 0) {
+            inputTitle.setText(psp.getPsp_title());
+            inputKind.setText(psp.getPsp_kind());
+            inputText.setText(psp.getPsp_text());
+        }
+        alertDialogBuilderUserInput
+                .setCancelable(false);
+
+        final AlertDialog alertDialog = alertDialogBuilderUserInput.create();
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Psp psp_buf = psp;
+                psp_buf.setPsp_title(inputTitle.getText().toString());
+                psp_buf.setPsp_kind(inputKind.getText().toString());
+                psp_buf.setPsp_text(inputText.getText().toString());
+                psp_buf.setPsp_time(DateUtil.getDateTime());
+                DatabaseHelper db = new DatabaseHelper(recyclerView.getContext());
+
+                if(shouldUpdate){
+                    db.updatePsp(psp_buf);
+                    DummyContent.ITEMS.set(position, psp_buf.toDummyItem());
+
+                    recyclerView.getAdapter().notifyItemChanged(position);
+                }
+                else {
+                    psp_buf.setId((int)db.insertPsp(psp_buf));
+                    Log.d("insert:",psp_buf.getId()+"");
+                    DummyContent.ITEMS.add(0, psp_buf.toDummyItem());
+                    recyclerView.getAdapter().notifyItemInserted(0);
+                }
+                alertDialog.dismiss();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
+
+    }
+
+}

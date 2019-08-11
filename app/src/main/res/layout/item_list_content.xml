@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+<com.mcxtzhang.swipemenulib.SwipeMenuLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/role_item_high"
+    android:clickable="true"
+    android:paddingBottom="1dp">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/item_relativelytout"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/item_kind"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_width="@dimen/item_width_2"
+        android:text="sfg"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/text_margin"
+        android:textAppearance="?attr/textAppearanceListItem" />
+
+    <TextView
+        android:id="@+id/item_title"
+        android:text="sfg"
+        android:layout_toRightOf="@id/item_kind"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/text_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceListItem" />
+    <TextView
+        android:id="@+id/item_under_1"
+        android:text="sfg"
+        android:layout_below="@id/item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/item_under_2"
+        android:layout_marginRight="@dimen/text_margin"
+        android:textAppearance="?attr/textAppearanceListItem" />
+
+    <TextView
+        android:id="@+id/item_under_2"
+        android:layout_width="wrap_content"
+        android:text="sfg"
+        android:layout_below="@id/item_title"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/text_margin"
+        android:textAppearance="?attr/textAppearanceListItem" />
+</RelativeLayout>
+    <!-- 以下都是侧滑菜单的内容依序排列 -->
+    <Button
+        android:id="@+id/btnDelete"
+        android:layout_width="75dp"
+        android:layout_height="match_parent"
+        android:background="#FF0000"
+        android:visibility="gone"
+        android:text="删除"
+        android:textColor="@android:color/white"/>
+
+    <Button
+        android:id="@+id/btnUpdate"
+        android:layout_width="60dp"
+        android:visibility="gone"
+        android:layout_height="match_parent"
+        android:background="#00C78C"
+        android:clickable="true"
+        android:text="修改"
+        android:textColor="@android:color/white"/>
+    <Button
+        android:id="@+id/btnStar"
+        android:layout_width="60dp"
+        android:visibility="gone"
+        android:layout_height="match_parent"
+        android:background="#00C78C"
+        android:clickable="true"
+        android:text="收藏"
+        android:textColor="@android:color/white"/>
+</com.mcxtzhang.swipemenulib.SwipeMenuLayout>
+</RelativeLayout>

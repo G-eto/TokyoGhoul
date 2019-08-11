@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/bg_round_click"
+    android:layout_margin="@dimen/margin_s"
+    android:orientation="vertical">
+    
+    <RelativeLayout
+        android:id="@+id/role_relativelytout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/role_item_high">
+        <ImageView
+            android:id="@+id/img_role"
+            android:layout_alignParentLeft="true"
+            android:layout_width="@dimen/img_width"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_menu_share"
+            android:layout_centerVertical="true"/>
+        <TextView
+            android:id="@+id/role_name"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/img_role"
+            android:text="有马贵将"
+            android:layout_width="@dimen/item_width_2"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/role_kind"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/role_name"
+            android:text="攻"
+            android:layout_width="@dimen/item_width_0"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/role_level"
+            android:layout_centerVertical="true"
+            android:text="sss"
+            android:layout_toRightOf="@id/role_kind"
+            android:layout_width="@dimen/item_width_1"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+    
+    <!--隐藏部分-资源-->
+    
+    <LinearLayout
+        android:id="@+id/role_gone"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_marginBottom="@dimen/margin_sm"
+        android:layout_height="wrap_content">
+        <TextView
+            android:text="所需资源"
+            android:layout_marginLeft="@dimen/margin_m"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/role_res_high_label">
+            <TextView
+                android:id="@+id/res_stone_value"
+                android:layout_width="@dimen/item_width_2"
+                android:text="进化宝石"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/margin_sm"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/stone_1"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/res_stone_value"
+                android:text="40000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/stone_2"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/stone_1"
+                android:layout_marginLeft="@dimen/margin_m"
+                android:text="40000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/role_res_high_label">
+            <TextView
+                android:id="@+id/res_rune_value"
+                android:layout_width="@dimen/item_width_2"
+                android:text="奥义套装"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/margin_sm"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/rune_1"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/res_rune_value"
+                android:text="300"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/rune_2"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/margin_sm"
+                android:layout_toRightOf="@id/rune_1"
+                android:text="300"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/rune_3"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/margin_sm"
+                android:layout_toRightOf="@id/rune_2"
+                android:text="300"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/rune_4"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/margin_sm"
+                android:layout_toRightOf="@id/rune_3"
+                android:text="300"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/stone_suit_1_introduce"
+            android:layout_marginLeft="@dimen/margin_sm_w2"
+            android:layout_marginRight="@dimen/margin_sm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="二级\n四级\n六级\n八级\n九级效果"/>
+        <!--小套装-->
+        <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="@dimen/role_res_high_label">-->
+            <!--<TextView-->
+                <!--android:id="@+id/res_stone_1_value"-->
+                <!--android:layout_width="@dimen/item_width_2"-->
+                <!--android:text="通用套装"-->
+                <!--android:layout_alignParentLeft="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_marginLeft="@dimen/margin_sm"-->
+                <!--android:layout_height="wrap_content" />-->
+            <!--<TextView-->
+                <!--android:id="@+id/stone_5"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_toRightOf="@id/res_stone_1_value"-->
+                <!--android:text="40000"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
+            <!--<TextView-->
+                <!--android:id="@+id/stone_6"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_toRightOf="@id/stone_5"-->
+                <!--android:layout_marginLeft="@dimen/margin_m"-->
+                <!--android:text="40000"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
+        <!--</RelativeLayout>-->
+        <TextView
+            android:layout_marginLeft="@dimen/margin_m"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="角色介绍"/>
+        <TextView
+            android:id="@+id/stone_role_introduce"
+            android:layout_marginLeft="@dimen/margin_sm"
+            android:layout_marginRight="@dimen/margin_sm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="二级\n四级\n六级\n八级\n九级效果"/>
+    </LinearLayout>
+
+
+</LinearLayout>

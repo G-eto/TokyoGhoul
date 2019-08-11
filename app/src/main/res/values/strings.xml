@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">TokyoGhoul</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">develop by Android Studio</string>
+    <string name="nav_header_subtitle">欢迎提交bug与建议</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">我</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">分享</string>
+    <string name="menu_about">关于</string>
+    <string name="menu_protocol">协议</string>
+
+    <!--钻石界面文字-->
+    <string name="diamonds_today_record">今日钻石余量</string>
+    <!--钻石提交按钮文字-->
+    <string name="diamonds_summit">提交</string>
+
+
+    <string-array name="port_array">
+        <item>QQ</item>
+        <item>微信</item>
+        <item>小米</item>
+        <item>华为</item>
+        <item>苹果</item>
+        <item>魅族</item>
+        <item>oppo</item>
+        <item>vivo</item>
+        <item>b站</item>
+        <item>其他</item>
+    </string-array>
+
+    <string name="tool_psp">大神攻略</string>
+    <string name="tool_story">同人故事</string>
+    <string name="tool_play">往期活动</string>
+    <string name="tool_rune">奥义查询</string>
+    <string name="tool_record">我的手记</string>
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
+    <string name="title_activity_rune">奥义查询</string>
+
+</resources>

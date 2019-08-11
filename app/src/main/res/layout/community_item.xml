@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bg_round_click"
+    android:clickable="true"
+    android:layout_margin="@dimen/margin_s"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/community_item_id"
+        android:layout_width="@dimen/item_width_1"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:textColor="#000"
+        android:layout_marginLeft="@dimen/margin_m"
+        android:layout_centerVertical="true"
+        android:hint="sdg" />
+    <TextView
+        android:layout_width="@dimen/item_width_3"
+        android:layout_height="wrap_content"
+        android:id="@+id/community_item_name"
+        android:layout_centerVertical="true"
+        android:text="不知火"
+        android:layout_toRightOf="@id/community_item_id"/>
+    <TextView
+        android:layout_width="@dimen/item_width_2"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/community_item_name"
+        android:id="@+id/community_item_port"
+        android:text="华为"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/community_item_port"
+        android:id="@+id/community_item_manager"
+        android:text="华为"/>
+    <TextView
+        android:id="@+id/community_item_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="2019/8/5 17:14:13"
+        android:layout_marginRight="@dimen/margin_m"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/community_item_name"/>
+
+</RelativeLayout>

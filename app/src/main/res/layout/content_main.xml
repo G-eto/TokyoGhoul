@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tabhost"
+    android:layout_height="match_parent"
+    tools:showIn="@layout/app_bar_main"
+    android:windowSoftInputMode="adjustNothing"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activity.MainActivity"
+    >
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <FrameLayout
+        android:id="@android:id/tabcontent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:layout_weight="9">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:id="@+id/table_main"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools">
+            <android.support.design.widget.TabLayout
+                android:id="@+id/community_tabs"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/tab_high" />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/community_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/table_diamonds"
+            android:orientation="vertical">
+
+            <!--折线图/柱状图-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/table"
+                android:orientation="vertical">
+                <com.github.mikephil.charting.charts.LineChart android:id="@+id/spread_line_chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    xmlns:android="http://schemas.android.com/apk/res/android" />
+            </LinearLayout>
+            <!--&lt;!&ndash;今日记录&ndash;&gt;-->
+            <RelativeLayout
+                android:layout_marginTop="@dimen/margin_m"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/vitality">
+                <EditText
+                    android:layout_marginLeft="@dimen/margin_sm"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/diamonds_input"
+                    android:background="@drawable/shape_corner"
+                    android:hint="记录今日钻石余额"
+                    android:layout_toLeftOf="@id/diamonds_input_btn"
+                    android:layout_marginRight="@dimen/margin_m"
+                    android:digits="1234567890"
+                    android:inputType="number"/>
+                <Button
+                    android:layout_centerVertical="true"
+                    android:id="@+id/diamonds_input_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="@dimen/margin_sm"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/shape_corner"
+                    android:hint="提交"/>
+
+        </RelativeLayout>
+
+            <!--&lt;!&ndash;往日记录&ndash;&gt;-->
+            <com.bin.david.form.core.SmartTable
+                android:id="@+id/table_record"
+                android:minHeight="@dimen/table"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/table_tools"
+            android:orientation="vertical">
+            <!--我的手记-->
+            <RelativeLayout
+                android:id="@+id/tool_layout_record"
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/margin_m"
+                android:layout_height="@dimen/vitality">
+                <ImageView
+                    android:id="@+id/tool_img_record"
+                    android:layout_marginLeft="@dimen/margin_m"
+                    android:layout_width="@dimen/img_width"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"/>
+                <TextView
+                    android:id="@+id/tool_text_record"
+                    android:text="@string/tool_record"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
+            <!--攻略-->
+            <RelativeLayout
+                android:id="@+id/tool_layout_psp"
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/margin_m"
+                android:layout_height="@dimen/vitality">
+                <ImageView
+                    android:id="@+id/tool_img_psp"
+                    android:layout_marginLeft="@dimen/margin_m"
+                    android:layout_width="@dimen/img_width"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"/>
+                <TextView
+                    android:id="@+id/tool_text_psp"
+                    android:text="@string/tool_psp"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
+            <!--活动-->
+            <RelativeLayout
+                android:id="@+id/tool_layout_play"
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/margin_m"
+                android:layout_height="@dimen/vitality">
+                <ImageView
+                    android:id="@+id/tool_img_play"
+                    android:layout_marginLeft="@dimen/margin_m"
+                    android:layout_width="@dimen/img_width"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"/>
+                <TextView
+                    android:id="@+id/tool_text_play"
+                    android:text="@string/tool_play"
+                    android:layout_width="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
+            <!--同人故事-->
+            <RelativeLayout
+                android:id="@+id/tool_layout_story"
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/margin_m"
+                android:layout_height="@dimen/vitality">
+                <ImageView
+                    android:id="@+id/tool_img_story"
+                    android:layout_marginLeft="@dimen/margin_m"
+                    android:layout_width="@dimen/img_width"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"/>
+                <TextView
+                    android:id="@+id/tool_text_story"
+                    android:layout_width="wrap_content"
+                    android:text="CDK"
+                    android:layout_centerVertical="true"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
+
+</FrameLayout>
+
+    <TabWidget
+        android:id="@android:id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="5dp"
+        android:windowSoftInputMode="adjustPan"
+        android:showDividers="none"></TabWidget>
+</LinearLayout>
+
+</TabHost>

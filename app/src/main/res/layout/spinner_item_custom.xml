@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0.5dp"-->
+        <!--android:background="#24ad9d" />-->
+    <RelativeLayout
+        android:background="@drawable/shape_corner"
+        android:textColor="#24AD9D"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dialog_h">
+
+        <ImageView
+            android:id="@+id/img_port"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_menu_share"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/margin_m"/>
+
+        <TextView
+            android:id="@+id/tv_port"
+            android:layout_width="@dimen/item_width_1"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_m"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/img_port"
+            android:text="微信"
+            android:textColor="#24AD9D"
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/tv_role"
+            android:layout_width="@dimen/item_width_2"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/tv_port"
+            android:text="微信"
+            android:textColor="#24AD9D"
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/tv_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_s"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/tv_role"
+            android:text="微信"
+            android:textColor="#24AD9D"
+            android:textSize="18sp" />
+    </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin_s"/>
+
+</LinearLayout>
