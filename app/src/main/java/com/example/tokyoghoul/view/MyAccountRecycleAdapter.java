@@ -90,7 +90,7 @@ public class MyAccountRecycleAdapter extends RecyclerView.Adapter<MyAccountRecyc
             @Override
             public void onClick(final View v) {
                 //item 点击事件
-                Toast.makeText(v.getContext(), "点击了第" + myViewHolder.getAdapterPosition() + "个", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(v.getContext(), "点击了第" + myViewHolder.getAdapterPosition() + "个", Toast.LENGTH_SHORT).show();
                 final AlertView dialog = new AlertView("选择操作",
                         "小号怎么了",
                         "取消",

@@ -25,14 +25,17 @@ import com.example.tokyoghoul.database.model.Role;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.tokyoghoul.activity.MainActivity.searchView;
+
 
 public class MyRoleFragment extends Fragment {
     RecyclerView recyclerView;
     View view;
     MyRoleRecycleAdapter myRoleRecycleAdapter;
-    SearchView searchView;
+    //SearchView searchView;
     DatabaseHelper db;
     List<Role> mlist;
+    public static int opopSearch = 0;
 
     @Nullable
     @Override
@@ -76,9 +79,9 @@ public class MyRoleFragment extends Fragment {
 //设置增加或删除条目的动画
         recyclerView.setItemAnimator( new DefaultItemAnimator());
 
-        searchView = view.findViewById(R.id.myrole_search);
+        //searchView = view.findViewById(R.id.myrole_search);
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        ((SearchView)searchView.getActionView()).setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 //myRoleRecycleAdapter.setData(db.selectRoles(s));
@@ -97,6 +100,34 @@ public class MyRoleFragment extends Fragment {
             }
 
         });
+
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if ((isVisibleToUser && isResumed())) {
+            onResume();
+        } else if (!isVisibleToUser) {
+            //Timber.i("On Pause on %s Fragment Invisble", getClass().getSimpleName());
+            onPause();
+        }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getUserVisibleHint()) {
+
+            //Timber.i("On Resume on %s Fragment Visible", getClass().getSimpleName());
+            //TODO give the signal that the fragment is visible
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //TODO give the signal that the fragment is invisible
+
 
     }
 }

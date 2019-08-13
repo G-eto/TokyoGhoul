@@ -28,6 +28,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bigkoo.svprogresshud.SVProgressHUD;
 import com.example.tokyoghoul.R;
 
 import com.example.tokyoghoul.activity.dummy.DummyContent;
@@ -75,12 +76,14 @@ public class ItemListActivity extends AppCompatActivity {
     DatabaseHelper db;
     public static RecyclerView recyclerView;
 
-    String jsondata = "";
+    public static String jsondata = "";
 
     private static ClipboardManager cm;
     private static ClipData mClipData;
 
-    private SimpleItemRecyclerViewAdapter adapter;
+    public static SimpleItemRecyclerViewAdapter adapter;
+
+    private static SVProgressHUD tips;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +100,24 @@ public class ItemListActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if(extras != null){
             mark = extras.getString("way");
+        }
+
+        tips = new SVProgressHUD(this);
+        //record
+        if(mark.equals(way[0])){
+            mark_id = 0;
+        }
+        //psp
+        else if(mark.equals(way[1])){
+            mark_id = 1;
+        }
+        //play
+        else if(mark.equals(way[2])){
+            mark_id = 2;
+        }
+        //cdk
+        else if(mark.equals(way[3])){
+            mark_id = 3;
         }
 
 
@@ -116,6 +137,7 @@ public class ItemListActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.item_list);
         assert recyclerView != null;
+        //recyclerView.setAdapter(adapter);
         setupRecyclerView((RecyclerView) recyclerView);
     }
 
@@ -193,6 +215,11 @@ public class ItemListActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
 
 
     private void setupRecyclerView(@NonNull final RecyclerView recyclerView) {
@@ -209,60 +236,21 @@ public class ItemListActivity extends AppCompatActivity {
                         list.get(i).getPsp_author(), list.get(i).getPsp_text()));
             }
             adapter = new SimpleItemRecyclerViewAdapter(this, DummyContent.ITEMS, mTwoPane, mark_id);
-
+            recyclerView.setAdapter(adapter);
+            //adapter.notifyDataSetChanged();
+            //tips.dismiss();
         }
         //psp json
         else{
-            DummyContent.ITEMS.clear();
-            Thread thread=new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    String url = "";
-                    if(mark.equals(way[1])){
-                        mark_id = 1;
-                        url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_psp.json";
-                    }
-                    //play
-                    else if(mark.equals(way[2])){
-                        mark_id = 2;
-                        url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_activity.json";
-                    }
-                    //cdk
-                    else if(mark.equals(way[3])){
-                        mark_id = 3;
-                        url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_cdk.json";
-                    }
+            //tips.show();
 
-                    int op = 0;
-                    while (jsondata.equals("")) {
-                        if(++op > 10){
-                            Log.d("请求失败","try 10 times");
-                            break;
-                        }
-                        try {
-                            jsondata = HtmlService.getHtml(url);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    DummyContent.ITEMS.addAll(getJson(jsondata));
-                    DummyContent.setVisitFlag(false);
-
-                }
-
-
-            });
             DummyContent.setVisitFlag(true);
-            thread.start();
-            int op = 0;
-            while (DummyContent.isVisit()){
-//                if(op == 100){
-//                    Log.d("deflut","jsondate weijiuxu");
-//                    break;
-//                }
-            }
             adapter = new SimpleItemRecyclerViewAdapter(this, DummyContent.ITEMS, mTwoPane, mark_id);
-            //recyclerView.setAdapter(adapter);
+            recyclerView.setAdapter(adapter);
+            while (DummyContent.isVisit()){
+            }
+            //tips.dismiss();
+
         }
 
 
@@ -278,6 +266,7 @@ public class ItemListActivity extends AppCompatActivity {
                     Log.d("copy", item.detail);
                     // 将ClipData内容放到系统剪贴板里。
                     cm.setPrimaryClip(mClipData);
+                    Gadget.showToast("复制成功", recyclerView.getContext());
 //                    Gadget.showToast("复制成功"+item.title, ItemListActivity.this);
                 }
                 else {
@@ -299,7 +288,7 @@ public class ItemListActivity extends AppCompatActivity {
                         boolean isUrl = false;
                         //约定版本号为零且为web者是url
                         if(DummyContent.ITEMS.get(position).web_edition == 0
-                                        && DummyContent.ITEMS.get(position).web_id > 0){
+                                && DummyContent.ITEMS.get(position).web_id > 0){
                             isUrl = true;
                         }
                         bundle.putBoolean("isUrl", isUrl);
@@ -325,7 +314,7 @@ public class ItemListActivity extends AppCompatActivity {
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
         private final ItemListActivity mParentActivity;
-        private final List<DummyContent.DummyItem> mValues;
+        //private final List<DummyContent.DummyItem> mValues;
         private final boolean mTwoPane;
         private final int mark_way;
         private OnitemClick onitemClick;   //定义点击事件接口
@@ -379,7 +368,7 @@ public class ItemListActivity extends AppCompatActivity {
         SimpleItemRecyclerViewAdapter(ItemListActivity parent,
                                       List<DummyContent.DummyItem> items,
                                       boolean twoPane, int way) {
-            mValues = items;
+            //mValues = items;
             mParentActivity = parent;
             mTwoPane = twoPane;
             mark_way = way;
@@ -394,10 +383,10 @@ public class ItemListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int position) {
-            holder.mTitle.setText(mValues.get(position).title);
-            holder.mKind.setText(mValues.get(position).kind);
-            holder.mText_1.setText(mValues.get(position).under_1);
-            holder.mText_2.setText(mValues.get(position).under_2);
+            holder.mTitle.setText(DummyContent.ITEMS.get(position).title);
+            holder.mKind.setText(DummyContent.ITEMS.get(position).kind);
+            holder.mText_1.setText(DummyContent.ITEMS.get(position).under_1);
+            holder.mText_2.setText(DummyContent.ITEMS.get(position).under_2);
 
             if (onitemClick != null) {
                 holder.item_relativelytout.setOnClickListener(new View.OnClickListener() {
@@ -434,7 +423,7 @@ public class ItemListActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         int op_id = holder.getAdapterPosition();
                         DatabaseHelper databaseHelper = new DatabaseHelper(recyclerView.getContext());
-                        databaseHelper.deletePsp(Integer.parseInt(mValues.get(op_id).id));
+                        databaseHelper.deletePsp(Integer.parseInt(DummyContent.ITEMS.get(op_id).id));
                         Gadget.showToast("已删除", view.getContext());
                         DummyContent.ITEMS.remove(op_id);
                         recyclerView.getAdapter().notifyItemRemoved(op_id);
@@ -457,13 +446,13 @@ public class ItemListActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         DatabaseHelper databaseHelper = new DatabaseHelper(view.getContext());
-                        databaseHelper.insertPsp(mValues.get(holder.getAdapterPosition()).toPsp());
+                        databaseHelper.insertPsp(DummyContent.ITEMS.get(holder.getAdapterPosition()).toPsp());
 //                        ((CstSwipeDelMenu) holder.itemView).quickClose();
+                        Gadget.showToast("已收藏到我的手记", view.getContext());
+                        recyclerView.getAdapter().notifyDataSetChanged();
                     }
                 });
             }
-
-
 
             //holder.itemView.setTag(mValues.get(position));
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -476,7 +465,7 @@ public class ItemListActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return mValues.size();
+            return DummyContent.ITEMS.size();
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
@@ -504,7 +493,7 @@ public class ItemListActivity extends AppCompatActivity {
     }
 
 
-    public static List<DummyContent.DummyItem> getJson(String jsonStr){
+    private static List<DummyContent.DummyItem> getJson(String jsonStr){
         JSONObject dataJson = null;
         List<DummyContent.DummyItem> list = new ArrayList<>();
         Log.d("sss:",jsonStr);
@@ -635,6 +624,51 @@ public class ItemListActivity extends AppCompatActivity {
 
         alertDialog.show();
 
+    }
+
+    public void reFreshData(){
+        tips = new SVProgressHUD(this);
+        tips.showWithStatus("加载中...");
+        final Thread thread=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = "";
+                if(mark.equals(way[1])){
+                    mark_id = 1;
+                    url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_psp.json";
+                }
+                //play
+                else if(mark.equals(way[2])){
+                    mark_id = 2;
+                    url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_activity.json";
+                }
+                //cdk
+                else if(mark.equals(way[3])){
+                    mark_id = 3;
+                    url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_cdk.json";
+                }
+
+                int op = 0;
+                while (jsondata.equals("")) {
+                    if(++op > 10){
+                        Log.d("请求失败","try 10 times");
+                        break;
+                    }
+                    try {
+                        jsondata = HtmlService.getHtml(url);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                DummyContent.ITEMS.addAll(getJson(jsondata));
+                DummyContent.setVisitFlag(false);
+                tips.dismiss();
+            }
+
+        });
+        DummyContent.setVisitFlag(true);
+        thread.start();
     }
 
 }

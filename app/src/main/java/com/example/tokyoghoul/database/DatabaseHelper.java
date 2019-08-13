@@ -14,6 +14,7 @@ import com.example.tokyoghoul.database.model.GamePlay;
 import com.example.tokyoghoul.database.model.Logs;
 import com.example.tokyoghoul.database.model.Psp;
 import com.example.tokyoghoul.database.model.Role;
+import com.example.tokyoghoul.database.model.Upload;
 import com.example.tokyoghoul.tool.Gadget;
 
 import java.sql.Connection;
@@ -43,8 +44,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(Logs.CREATE_TABLE);
         db.execSQL(Account.CREATE_TABLE);
         db.execSQL(Psp.CREATE_TABLE);
+        db.execSQL(Upload.CREATE_TABLE);
 //        db.execSQL(GamePlay.CREATE_TABLE);
 //        db.execSQL(CDKs.CREATE_TABLE);
+
 
         //initRoleTable(mcontext);
     }
@@ -56,6 +59,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + Logs.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + CommunityManage.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + Psp.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + Upload.TABLE_NAME);
 //        db.execSQL("DROP TABLE IF EXISTS " + CDKs.TABLE_NAME);
 //        db.execSQL("DROP TABLE IF EXISTS " + GamePlay.TABLE_NAME);
 
@@ -79,6 +83,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long id = db.insert(Logs.TABLE_NAME, null, values);
         db.close();
+
+        updateLog(getLog((int)id));
+
         return id;
     }
 
@@ -95,8 +102,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     update a log
      */
     public void updateLog(Logs diamondLog){
+        int add = 0;
+        //更新自己和后面一个的add
+        List<Logs> list = getAllLogs("DESC");
+        Logs after = new Logs();
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        for(int i = 0; i < list.size(); i++){
+            if(list.get(i).getDate().equals(diamondLog.getDate())){
+                if(i - 1 >= 0){
+                    after = list.get(i - 1);
+                    after.setDiamondsIncome(after.getDiamondsAll() - diamondLog.getDiamondsAll());
+                    ContentValues values2 = new ContentValues();
+                    values2.put(Logs.COLUMN_DATE, after.getDate());
+                    values2.put(Logs.COLUMN_ONLINETIME, after.getOnlineTime());
+                    values2.put(Logs.COLUMN_DIAMONDSALL, after.getDiamondsAll());
+                    values2.put(Logs.COLUMN_DIAMONDSINCOME, after.getDiamondsIncome());
+
+                    db.update(Logs.TABLE_NAME, values2, Logs.COLUMN_ID + " = ?",
+                            new String[]{String.valueOf(after.getId())});
+                }
+
+                if(i + 1 < list.size()){
+                    diamondLog.setDiamondsIncome(diamondLog.getDiamondsAll() - list.get(i + 1).getDiamondsAll());
+                }
+                break;
+            }
+
+        }
         values.put(Logs.COLUMN_DATE, diamondLog.getDate());
         values.put(Logs.COLUMN_ONLINETIME, diamondLog.getOnlineTime());
         values.put(Logs.COLUMN_DIAMONDSALL, diamondLog.getDiamondsAll());
@@ -135,24 +168,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return log;
     }
 
-    public int getTodayLog(String date){
+    public void getTodayLog(String date, int number){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(Logs.TABLE_NAME,
                 new String[]{Logs.COLUMN_ID, Logs.COLUMN_DATE, Logs.COLUMN_ONLINETIME,
                         Logs.COLUMN_DIAMONDSALL, Logs.COLUMN_DIAMONDSINCOME },
-                Logs.COLUMN_ID + " =?",
+                Logs.COLUMN_DATE + " =?",
                 new String[]{date},
                 null, null, null, null);
 
-        if(cursor.getCount() > 0){
-            cursor.moveToFirst();
+        Logs log = new Logs();
+        if(cursor.moveToFirst()){
+            Logs obj = new Logs(
+                    cursor.getInt(cursor.getColumnIndex(Logs.COLUMN_ID)),
+                    cursor.getString(cursor.getColumnIndex(Logs.COLUMN_DATE)),
+                    cursor.getInt(cursor.getColumnIndex(Logs.COLUMN_ONLINETIME)),
+                    cursor.getInt(cursor.getColumnIndex(Logs.COLUMN_DIAMONDSALL)),
+                    cursor.getInt(cursor.getColumnIndex(Logs.COLUMN_DIAMONDSINCOME)));
+            log = obj;
+            cursor.close();
+            db.close();
+            log.setDiamondsIncome(obj.getDiamondsIncome()+number-obj.getDiamondsAll());
+            log.setDiamondsAll(number);
+            log.setDate(date);
+
+            updateLog(log);
         }
-        else
-            return -1;
-        int id = cursor.getInt(cursor.getColumnIndex(Logs.COLUMN_ID));
-        cursor.close();
-        db.close();
-        return id;
+        else{
+            cursor.close();
+            db.close();
+            log.setDiamondsAll(number);
+            log.setDate(date);
+            insertLog(log);
+        }
+
+
     }
 
     /*
@@ -498,6 +548,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return list;
     }
 
+    public int getRoleCount(){
+        String countQuery = "SELECT  * FROM " + Role.TABLE_NAME;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+
+        int count = cursor.getCount();
+        cursor.close();
+        db.close();
+
+        return count;
+    }
+
     public List<Role> selectRoles(String name){
         String sql = "SELECT * FROM " + Role.TABLE_NAME
                     + " WHERE " + Role.COLUMN_ROLE_NAME + " LIKE '%" + name + "%'";
@@ -723,28 +785,98 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     json
      */
 
-    public static void initRoleTable(Context context) {
+    /*
+    upload insert delete update
+     */
+    public long insertUpload(Upload obj){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(Upload.COLUMN_TITLE, obj.getTitle());
+        values.put(Upload.COLUMN_PHONE, obj.getPhone());
+        values.put(Upload.COLUMN_TEXT, obj.getText());
+        values.put(Upload.COLUMN_DATE, obj.getDate());
+        values.put(Upload.COLUMN_KIND, obj.getKind());
+
+        long id = db.insert(Upload.TABLE_NAME, null, values);
+        db.close();
+        return id;
+    }
+
+    public void updateUpload(Upload obj){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(Upload.COLUMN_TITLE, obj.getTitle());
+        values.put(Upload.COLUMN_PHONE, obj.getPhone());
+        values.put(Upload.COLUMN_TEXT, obj.getText());
+        values.put(Upload.COLUMN_DATE, obj.getDate());
+        values.put(Upload.COLUMN_KIND, obj.getKind());
+        db.update(Upload.TABLE_NAME, values, Upload.COLUMN_ID + " = ?",
+                new String[]{String.valueOf(obj.getId())});
+        db.close();
+    }
+
+    public void deleteUpload(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(Upload.TABLE_NAME, Upload.COLUMN_ID + " = ?",
+                new String[]{String.valueOf(id)});
+        db.close();
+    }
+
+    public List<Upload> getAllUploads(){
+        String sql = "SELECT * FROM " + Upload.TABLE_NAME ;
+        List<Upload> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(sql, null);
+
+        if(cursor.moveToFirst()){
+            do{
+                Upload log = new Upload();
+                log.setId(cursor.getInt(cursor.getColumnIndex(Upload.COLUMN_ID)));
+                log.setTitle(cursor.getString(cursor.getColumnIndex(Upload.COLUMN_TITLE)));
+                log.setDate(cursor.getString(cursor.getColumnIndex(Upload.COLUMN_DATE)));
+                log.setText(cursor.getString(cursor.getColumnIndex(Upload.COLUMN_TEXT)));
+                log.setPhone(cursor.getString(cursor.getColumnIndex(Upload.COLUMN_PHONE)));
+                log.setKind(cursor.getString(cursor.getColumnIndex(Upload.COLUMN_KIND)));
+                list.add(log);
+            }while (cursor.moveToNext());
+        }
+        db.close();
+        return list;
+    }
+
+
+    public static void initRoleTable(final Context context, final String sql) {
         //final String REMOTE_IP = "ghfuuto7.2392lan.dnstoo.com:3306";
         final String URL = "jdbc:mysql://ghfuuto7.2392.dnstoo.com:5504/wakof8" +
-                "?characterEncoding=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true&autoReconnect=true";
+                "?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true&autoReconnect=true";
 
         final String USER = "wakof8_f";
         final String PASSWORD = "n549tjkt";
-        Connection conn;
-        conn = Gadget.openConnection(URL, USER, PASSWORD);
-        System.out.println("All users info:");
-        Gadget.query(conn, "select * from role", context);
 
-
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                conn = null;
-            } finally {
-                conn = null;
+        new Thread(new Runnable() {
+            public void run() {
+                System.out.println("bbbbbbb");
+                Connection conn;
+                conn = Gadget.openConnection(URL, USER, PASSWORD);
+                System.out.println("All users info:");
+                if(sql.equals("select * from role"))
+                    Gadget.query(conn, sql, context);
+                else
+                    Gadget.queryUpload(conn, sql, context);
+                if (conn != null) {
+                    try {
+                        conn.close();
+                    } catch (SQLException e) {
+                        conn = null;
+                    } finally {
+                        conn = null;
+                    }
+                }
             }
-        }
+        }).start();
+
     }
 
 }

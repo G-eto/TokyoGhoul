@@ -36,7 +36,7 @@ public class MyRoleRecycleAdapter extends RecyclerView.Adapter<MyRoleRecycleAdap
         public final TextView role_rune_3;
         public final TextView role_rune_4;
         public final TextView role_rune_suit;
-        public final TextView role_introduce;
+        //public final TextView role_introduce;
         public final RelativeLayout mrelativeLayout;
         public boolean isClose = true;
         public LinearLayout mlinearLayout;
@@ -54,7 +54,7 @@ public class MyRoleRecycleAdapter extends RecyclerView.Adapter<MyRoleRecycleAdap
             role_rune_3 = (TextView) v.findViewById(R.id.rune_3);
             role_rune_4 = (TextView) v.findViewById(R.id.rune_4);
             role_rune_suit = (TextView) v.findViewById(R.id.stone_suit_1_introduce);
-            role_introduce = (TextView) v.findViewById(R.id.stone_role_introduce);
+            //role_introduce = (TextView) v.findViewById(R.id.stone_role_introduce);
             mrelativeLayout = v.findViewById(R.id.role_relativelytout);
             mlinearLayout = v.findViewById(R.id.role_gone);
         }
@@ -96,12 +96,12 @@ public class MyRoleRecycleAdapter extends RecyclerView.Adapter<MyRoleRecycleAdap
         myViewHolder.role_level.setText(mdata.get(position).getRole_level());
         myViewHolder.role_stone_1.setText(mdata.get(position).getRole_stone_1());
         myViewHolder.role_stone_2.setText(mdata.get(position).getRole_stone_2());
-        myViewHolder.role_rune_1.setText(mdata.get(position).getRole_stone_1());
-        myViewHolder.role_rune_2.setText(mdata.get(position).getRole_stone_2());
+        myViewHolder.role_rune_1.setText(mdata.get(position).getRole_rune_1());
+        myViewHolder.role_rune_2.setText(mdata.get(position).getRole_rune_2());
         myViewHolder.role_rune_3.setText(mdata.get(position).getRole_rune_3());
         myViewHolder.role_rune_4.setText(mdata.get(position).getRole_rune_4());
         myViewHolder.role_rune_suit.setText(mdata.get(position).getRole_rune_suit());
-        myViewHolder.role_introduce.setText(mdata.get(position).getRole_introduce());
+//        myViewHolder.role_introduce.setText(mdata.get(position).getRole_introduce());
 
         myViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

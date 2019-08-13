@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.tokyoghoul.activity.ItemListActivity.adapter;
+import static com.example.tokyoghoul.activity.ItemListActivity.recyclerView;
+
 /**
  * Helper class for providing sample content for user interfaces created by
  * Android template wizards.
@@ -27,9 +30,12 @@ public class DummyContent {
         if(visitFlag){
             return true;
         }
+        recyclerView.getAdapter().notifyDataSetChanged();
         return false;
     }
     public static void setVisitFlag(boolean is){
+//        if(!is)
+//            adapter.notifyDataSetChanged();
         visitFlag = is;
     }
 

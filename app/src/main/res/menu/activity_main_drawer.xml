@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
@@ -7,23 +8,22 @@
         <item
             android:id="@+id/nav_you"
             android:icon="@drawable/ic_menu_camera"
-            android:title="@string/menu_home" />
-        <item
-            android:id="@+id/nav_data"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="数据投稿" />
+            android:visible="false"
+            android:title="账号" />
         <item
             android:id="@+id/nav_advice"
             android:icon="@drawable/ic_menu_manage"
-            android:title="反馈建议" />
-        <item
-            android:id="@+id/nav_bug"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="BUG提醒" />
+            android:title="反馈投稿"
+            app:actionViewClass="android.widget.TextView" />
         <item
             android:id="@+id/nav_share"
             android:icon="@drawable/ic_menu_share"
             android:title="@string/menu_share" />
+        <item
+            android:id="@+id/nav_data"
+            android:icon="@drawable/ic_menu_manage"
+            android:visible="false"
+            android:title="上传钻石记录" />
     </group>
 
     <item android:title="Disclaimer">

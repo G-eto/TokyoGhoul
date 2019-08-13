@@ -108,7 +108,7 @@ public class Role {
     public Role(int id, byte[] blob, String role_name, String role_kind, String role_level,
                 String role_stone_1, String role_stone_2,
                 String role_rune_1, String role_rune_2, String role_rune_3, String role_rune_4,
-                String role_rune_suit, String role_introduce, String role_state){
+                String role_rune_suit, String role_state){
         this.id = id;
         this.role_img = blob;
         this.role_name = role_name;
@@ -122,7 +122,7 @@ public class Role {
         this.role_rune_4 = role_rune_4;
         this.role_rune_suit = role_rune_suit;
         this.role_state = role_state;
-        this.role_introduce = role_introduce;
+        this.role_introduce = "";
         this.role_img_show = bytesToBitmap(blob);
     }
 

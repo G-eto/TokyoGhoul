@@ -115,17 +115,20 @@ public class LineChartDiamonds{
         lineChart.animateX(500);  //立即执行动画
     }
 
-    private LineData getLineData(int count, float range) {
-        for (int i = 0; i < count; i++) {
+    public void setXdate(){
+        xValues.clear();
+        datelist.clear();
+        for (int i = 0; i < list.size(); i++) {
             // x轴显示的数据，这里默认使用数字下标显示
             xValues.add(list.get(i).getDate().substring(5, 10));
             datelist.add(list.get(i).getDate());
             dateplus[i] = list.get(i).getDiamondsIncome();
         }
+    }
 
 
-
-
+    private LineData getLineData(int count, float range) {
+        setXdate();
         // y轴的数据
         yValues = new ArrayList<Entry>();
         for (int i = 0; i < count; i++) {
@@ -192,6 +195,7 @@ public class LineChartDiamonds{
     public void refresh(){
         list.clear();
         list.addAll(db.getAllLogs("ASC"));
+        setXdate();
         mLineChart.notifyDataSetChanged();
         drawTheChartByMPAndroid();
         Drawable drawable = ContextCompat.getDrawable(mcontext, R.drawable.fade_blue);

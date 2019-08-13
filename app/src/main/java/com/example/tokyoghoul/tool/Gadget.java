@@ -70,10 +70,10 @@ public class Gadget {
         return conn;
     }
 
-    public static void query(Connection conn, String sql, Context context) {
+    public static boolean query(Connection conn, String sql, Context context) {
 
         if (conn == null) {
-            return;
+            return false;
         }
         Log.d("mysql1","44");
 
@@ -84,6 +84,20 @@ public class Gadget {
         try {
             statement = conn.createStatement();
             result = statement.executeQuery(sql);
+
+            result.last();
+            int count = result.getRow(); //获得ResultSet的总行数
+
+            Log.d("mysql1",count+"个web");
+            int count_local = new DatabaseHelper(context).getRoleCount();
+            Log.d("mysql1",count+"个local");
+            if(count <= count_local){
+                return true;
+            }
+
+//            result.first();
+//            Log.d("mysql1",count+"个web");
+
             if (result != null && result.first()) {
                 int idColumnIndex = result.findColumn("id");
                 int imgColumnIndex = result.findColumn("img");
@@ -97,7 +111,6 @@ public class Gadget {
                 int rune_3_ColumnIndex = result.findColumn("rune_3");
                 int rune_4_ColumnIndex = result.findColumn("rune_4");
                 int rune_suitColumnIndex = result.findColumn("rune_suit");
-                int introduceColumnIndex = result.findColumn("introduce");
                 Log.d("mysql1",55+result.toString());
                 System.out.println("id\t\t" + "name");
                 while (!result.isAfterLast()) {
@@ -109,7 +122,7 @@ public class Gadget {
                             result.getString(stone_1ColumnIndex), result.getString(stone_2ColumnIndex),
                             result.getString(rune_1_ColumnIndex), result.getString(rune_2_ColumnIndex),
                             result.getString(rune_3_ColumnIndex), result.getString(rune_4_ColumnIndex),
-                            result.getString(rune_suitColumnIndex), result.getString(introduceColumnIndex),
+                            result.getString(rune_suitColumnIndex),
                             "未获得"));
 
                     result.next();
@@ -137,6 +150,7 @@ public class Gadget {
 
             }
         }
+        return true;
     }
 
     public static boolean execSQL(Connection conn, String sql) {
@@ -157,5 +171,35 @@ public class Gadget {
         }
 
         return execResult;
+    }
+
+    public static boolean queryUpload(Connection conn, String sql, Context context) {
+
+        if (conn == null) {
+            return false;
+        }
+        Log.d("mysql1",sql);
+
+        Statement statement = null;
+        boolean result = false;
+
+        try {
+            statement = conn.createStatement();
+            result = statement.execute(sql);
+            Log.d("mysql1","uploadSuccess");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                    statement = null;
+                }
+
+            } catch (SQLException sqle) {
+
+            }
+        }
+        return result;
     }
 }

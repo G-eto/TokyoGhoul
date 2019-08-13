@@ -40,5 +40,6 @@ dependencies {
     implementation 'us.feras.mdv:markdownview:1.1.0'
     implementation 'com.github.tiagohm.MarkdownView:library:0.19.0'
     implementation 'com.github.mcxtzhang:SwipeDelMenuLayout:V1.3.0'
+    implementation 'com.bigkoo:svprogresshud:1.0.6'
     implementation files('libs\\mysql-connector-java-5.1.48.jar')
 }

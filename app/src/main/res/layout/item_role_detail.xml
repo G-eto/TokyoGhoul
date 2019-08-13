@@ -160,18 +160,18 @@
                 <!--android:layout_width="wrap_content"-->
                 <!--android:layout_height="wrap_content" />-->
         <!--</RelativeLayout>-->
-        <TextView
-            android:layout_marginLeft="@dimen/margin_m"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="角色介绍"/>
-        <TextView
-            android:id="@+id/stone_role_introduce"
-            android:layout_marginLeft="@dimen/margin_sm"
-            android:layout_marginRight="@dimen/margin_sm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="二级\n四级\n六级\n八级\n九级效果"/>
+        <!--<TextView-->
+            <!--android:layout_marginLeft="@dimen/margin_m"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="角色介绍"/>-->
+        <!--<TextView-->
+            <!--android:id="@+id/stone_role_introduce"-->
+            <!--android:layout_marginLeft="@dimen/margin_sm"-->
+            <!--android:layout_marginRight="@dimen/margin_sm"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="二级\n四级\n六级\n八级\n九级效果"/>-->
     </LinearLayout>
 
 

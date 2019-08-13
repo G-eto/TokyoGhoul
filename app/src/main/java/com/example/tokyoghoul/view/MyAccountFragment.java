@@ -16,26 +16,28 @@ import com.example.tokyoghoul.R;
 import com.example.tokyoghoul.database.model.Account;
 import com.example.tokyoghoul.database.model.CommunityManage;
 
+import static com.example.tokyoghoul.activity.MainActivity.ackViewId;
+
 public class MyAccountFragment extends Fragment {
 
-    RecyclerView recyclerView;
-    View view;
-    MyAccountRecycleAdapter myAccountRecycleAdapter;
+    public RecyclerView recyclerView;
+    public static View view_account;
+    public static MyAccountRecycleAdapter myAccountRecycleAdapter;
     LinearLayout mlinearLayout;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.fragment_account, null);
-        myAccountRecycleAdapter = new MyAccountRecycleAdapter(view);
+        view_account = inflater.inflate(R.layout.fragment_account, null);
+        myAccountRecycleAdapter = new MyAccountRecycleAdapter(view_account);
         InitView();
-        return view;
+        return view_account;
     }
 
     private void InitView(){
-        recyclerView = (RecyclerView) view.findViewById(R.id.account_recycleview);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
+        recyclerView = (RecyclerView) view_account.findViewById(R.id.account_recycleview);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(view_account.getContext());
 //设置布局管理器
         recyclerView.setLayoutManager(layoutManager);
 //设置为垂直布局，这也是默认的
@@ -47,13 +49,13 @@ public class MyAccountFragment extends Fragment {
 //设置增加或删除条目的动画
         recyclerView.setItemAnimator( new DefaultItemAnimator());
 
-        mlinearLayout = view.findViewById(R.id.add_account);
-        mlinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                myAccountRecycleAdapter.showNoteDialog(false, new Account(), view, -1);
-            }
-        });
+//        mlinearLayout = view_account.findViewById(R.id.add_account);
+//        mlinearLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                myAccountRecycleAdapter.showNoteDialog(false, new Account(), view_account, -1);
+//            }
+//        });
 
     }
 //    @Override

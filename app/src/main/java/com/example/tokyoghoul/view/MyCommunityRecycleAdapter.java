@@ -123,7 +123,7 @@ public class MyCommunityRecycleAdapter extends RecyclerView.Adapter<MyCommunityR
                         new OnItemClickListener(){
                     @Override
                     public void onItemClick(Object o, int position_son) {
-                        Toast.makeText(v.getContext(), "点击了第" + position_son + "个", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(v.getContext(), "点击了第" + position_son + "个", Toast.LENGTH_SHORT).show();
                         final int op =  myViewHolder.getAdapterPosition();
                         switch (position_son){
                             case 1:
@@ -137,7 +137,7 @@ public class MyCommunityRecycleAdapter extends RecyclerView.Adapter<MyCommunityR
                                         notifyItemChanged(op);
                                         //Toast.makeText(v.getContext(), "已更新最近时间", Toast.LENGTH_SHORT).show();
                                     }
-                                }).setType(new boolean[]{false, false, false, true, true, true})// 默认全部显示
+                                }).setType(new boolean[]{false, false, true, true, true, true})// 默认全部显示
                                         .build();
                                 pvTime.show();
                                 break;

@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class DateUtil {
 
@@ -22,7 +23,7 @@ public class DateUtil {
     }
 
     public static String getTime(){
-        Calendar c = Calendar.getInstance();
+        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+8:00"));
         int year = c.get(Calendar.YEAR);   //获取年份
         int month = c.get(Calendar.MONTH) + 1;  //获取月份
         int day = c.get(Calendar.DAY_OF_MONTH);  //获取日期
@@ -36,21 +37,21 @@ public class DateUtil {
     }
 
     public static String getDate(){
-        Calendar c = Calendar.getInstance();
+        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+8:00"));
         int year = c.get(Calendar.YEAR);   //获取年份
         int month = c.get(Calendar.MONTH) + 1;  //获取月份
         int day = c.get(Calendar.DAY_OF_MONTH);  //获取日期
         int hour = c.get(Calendar.HOUR_OF_DAY);  //获取小时
         int minute = c.get(Calendar.MINUTE); //获取分钟
         int second = c.get(Calendar.SECOND);//秒
-        String date = String.format("%04d",year)+":"
-                + String.format("%02d",month)+":"
+        String date = String.format("%04d",year)+"/"
+                + String.format("%02d",month)+"/"
                 + String.format("%02d",day);
         return date;
     }
 
     public static String getDateTime(){
-        Calendar c = Calendar.getInstance();
+        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+8:00"));
         int year = c.get(Calendar.YEAR);   //获取年份
         int month = c.get(Calendar.MONTH) + 1;  //获取月份
         int day = c.get(Calendar.DAY_OF_MONTH);  //获取日期
@@ -69,6 +70,12 @@ public class DateUtil {
 
     public static String getDateDate(Date date){
         SimpleDateFormat sdf =new SimpleDateFormat("yyyy/MM/dd HH:mm:ss" );
+        String str = sdf.format(date);
+        return str;
+    }
+
+    public static String getDateToDate(Date date){
+        SimpleDateFormat sdf =new SimpleDateFormat("yyyy/MM/dd" );
         String str = sdf.format(date);
         return str;
     }

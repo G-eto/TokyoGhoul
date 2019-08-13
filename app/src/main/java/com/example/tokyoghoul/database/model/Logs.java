@@ -19,9 +19,9 @@ public class Logs {
 
     //钻石
     private int id;
-    @SmartColumn(id = 0, name = "日期")
+    @SmartColumn(id = 1, name = "日期")
     private String date;
-    @SmartColumn(id = 1, name = "在线/min")
+    //@SmartColumn(id = 1, name = "在线/min")
     private int onlineTime;//min
     @SmartColumn(id = 3, name = "钻石余量")
     private int diamondsAll;

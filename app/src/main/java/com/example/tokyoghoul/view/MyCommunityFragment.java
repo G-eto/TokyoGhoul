@@ -18,16 +18,16 @@ import com.example.tokyoghoul.database.model.CommunityManage;
 
 public class MyCommunityFragment extends Fragment {
 
-    RecyclerView recyclerView;
-    View view;
-    MyCommunityRecycleAdapter myCommunityRecycleAdapter;
+    public RecyclerView recyclerView;
+    public static View view_community;
+    public static MyCommunityRecycleAdapter myCommunityRecycleAdapter;
     LinearLayout mlinearLayout;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.fragment_mycommunity, null);
+        view_community = inflater.inflate(R.layout.fragment_mycommunity, null);
 
  //       db = new DatabaseHelper(view.getContext());
         //test
@@ -36,15 +36,15 @@ public class MyCommunityFragment extends Fragment {
 //        db.insertCommunity(5,"哈子","08/07 13:14",2);
 //        db.insertCommunity(3,"孩子","08/01 13:14",4);
 
-        myCommunityRecycleAdapter = new MyCommunityRecycleAdapter(view);
+        myCommunityRecycleAdapter = new MyCommunityRecycleAdapter(view_community);
         InitView();
 
-        return view;
+        return view_community;
     }
 
     private void InitView(){
-        recyclerView = (RecyclerView) view.findViewById(R.id.mycommunity_recycleview);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
+        recyclerView = (RecyclerView) view_community.findViewById(R.id.mycommunity_recycleview);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(view_community.getContext());
 //设置布局管理器
         recyclerView.setLayoutManager(layoutManager);
 //设置为垂直布局，这也是默认的
@@ -56,13 +56,13 @@ public class MyCommunityFragment extends Fragment {
 //设置增加或删除条目的动画
         recyclerView.setItemAnimator( new DefaultItemAnimator());
 
-        mlinearLayout = view.findViewById(R.id.add_community);
-        mlinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               myCommunityRecycleAdapter.showNoteDialog(false, new CommunityManage(), view, -1);
-            }
-        });
+//        mlinearLayout = view_community.findViewById(R.id.add_community);
+//        mlinearLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//               myCommunityRecycleAdapter.showNoteDialog(false, new CommunityManage(), view_community, -1);
+//            }
+//        });
 
     }
     @Override

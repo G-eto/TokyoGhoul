@@ -11,7 +11,7 @@
         android:layout_margin="@dimen/margin_s"
         android:fontFamily="sans-serif-medium"
         android:lineSpacingExtra="8sp"
-        android:text="社团信息填写"
+        android:text="填写"
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
         android:textColor="#000"
@@ -27,18 +27,40 @@
         android:layout_marginTop="@dimen/margin_s"
         android:layout_below="@id/dialog_title">
         <TextView
-            android:layout_width="@dimen/dialog_icon"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:id="@+id/text_id"
-            android:hint="社团id"/>
+            android:text="题目"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxLines="1"
             android:layout_toRightOf="@id/text_id"
             android:layout_centerVertical="true"
-            android:inputType="number"
-            android:id="@+id/input_id"/>
+            android:id="@+id/input_title"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_11"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dialog_h"
+        android:layout_marginLeft="@dimen/margin_xm"
+        android:layout_marginRight="@dimen/margin_xm"
+        android:layout_marginTop="@dimen/margin_s"
+        android:layout_below="@id/layout_1">
+        <TextView
+            android:layout_width="@dimen/item_width_1"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:id="@+id/text_id1"
+            android:text="分类"/>
+        <android.support.v7.widget.AppCompatSpinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/text_id1"
+            android:layout_centerVertical="true"
+            android:id="@+id/spinner_kind"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -48,43 +70,42 @@
         android:layout_marginLeft="@dimen/margin_xm"
         android:layout_marginRight="@dimen/margin_xm"
         android:layout_marginTop="@dimen/margin_s"
-        android:layout_below="@id/layout_1">
+        android:layout_below="@id/layout_11">
         <TextView
-            android:layout_width="@dimen/dialog_icon"
+            android:layout_width="wrap_content"
             android:id="@+id/text_name"
             android:layout_centerVertical="true"
             android:layout_height="wrap_content"
-            android:hint="社团名"/>
+            android:maxLines="1"
+            android:text="联系方式"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/text_name"
-            android:maxLength="@integer/max_name_length"
-            android:id="@+id/input_name"/>
+            android:id="@+id/input_phone"/>
     </RelativeLayout>
     <RelativeLayout
         android:id="@+id/layout_3"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dialog_h"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_xm"
         android:layout_marginRight="@dimen/margin_xm"
         android:layout_marginTop="@dimen/margin_s"
         android:layout_marginBottom="@dimen/margin_s"
         android:layout_below="@id/layout_2">
         <TextView
-            android:layout_width="@dimen/dialog_icon"
+            android:layout_width="wrap_content"
             android:id="@+id/text_manager"
-            android:layout_centerVertical="true"
             android:layout_height="wrap_content"
-            android:hint="管理员"/>
-        <Spinner
+            android:text="描述"/>
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:spinnerMode="dialog"
-            android:background="@null"
-            android:layout_toRightOf="@id/text_manager"
-            android:id="@+id/manager_spinner" />
+            android:minLines="2"
+            android:maxLines="10"
+            android:layout_below="@id/text_manager"
+            android:id="@+id/input_content" />
     </RelativeLayout>
     <View
         android:layout_width="match_parent"
@@ -115,7 +136,7 @@
             android:id="@+id/dialog_save"
             android:layout_marginTop="@dimen/margin_s_1"
             android:layout_width="0dp"
-            android:hint="保存"
+            android:hint="上传"
             android:textColorHint="@color/bule_ios"
             android:textSize="@dimen/button_font_size"
             android:background="#FFF"

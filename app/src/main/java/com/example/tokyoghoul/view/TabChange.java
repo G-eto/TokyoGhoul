@@ -3,6 +3,11 @@ package com.example.tokyoghoul.view;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 
+import static com.example.tokyoghoul.activity.MainActivity.ackViewId;
+import static com.example.tokyoghoul.activity.MainActivity.addMenu;
+import static com.example.tokyoghoul.activity.MainActivity.searchView;
+import static com.example.tokyoghoul.view.MyRoleFragment.opopSearch;
+
 public class TabChange {
     private String[] Title;
     private int[] selectTabRes;
@@ -55,6 +60,15 @@ public class TabChange {
 
                 for (int i = 0; i < Title.length; i++) {
                     if (tab == tabLayout.getTabAt(i)) {
+                        if(i == 0){
+                            searchView.setVisible(true);
+                            addMenu.setVisible(false);
+                        }else {
+                            searchView.setVisible(false);
+                            addMenu.setVisible(true);
+                        }
+                        ackViewId = i;
+                        opopSearch = i;
                         tabLayout.getTabAt(i).setIcon(selectTabRes[i]);
                         viewPager.setCurrentItem(i);
                     }

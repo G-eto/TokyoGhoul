@@ -69,7 +69,7 @@
                     android:layout_centerVertical="true"
                     android:id="@+id/diamonds_input"
                     android:background="@drawable/shape_corner"
-                    android:hint="记录今日钻石余额"
+                    android:hint="右边今日，顶栏其他"
                     android:layout_toLeftOf="@id/diamonds_input_btn"
                     android:layout_marginRight="@dimen/margin_m"
                     android:digits="1234567890"
@@ -117,6 +117,7 @@
                 <TextView
                     android:id="@+id/tool_text_record"
                     android:text="@string/tool_record"
+                    android:layout_marginLeft="@dimen/margin_m"
                     android:layout_centerVertical="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -137,6 +138,7 @@
                 <TextView
                     android:id="@+id/tool_text_psp"
                     android:text="@string/tool_psp"
+                    android:layout_marginLeft="@dimen/margin_m"
                     android:layout_centerVertical="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -156,13 +158,14 @@
                     android:layout_centerVertical="true"/>
                 <TextView
                     android:id="@+id/tool_text_play"
+                    android:layout_marginLeft="@dimen/margin_m"
                     android:text="@string/tool_play"
                     android:layout_width="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_height="wrap_content" />
             </RelativeLayout>
 
-            <!--同人故事-->
+            <!--cdk-->
             <RelativeLayout
                 android:id="@+id/tool_layout_story"
                 android:layout_width="match_parent"
@@ -172,12 +175,14 @@
                     android:id="@+id/tool_img_story"
                     android:layout_marginLeft="@dimen/margin_m"
                     android:layout_width="@dimen/img_width"
+
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"/>
                 <TextView
                     android:id="@+id/tool_text_story"
                     android:layout_width="wrap_content"
-                    android:text="CDK"
+                    android:layout_marginLeft="@dimen/margin_m"
+                    android:text=" CDK"
                     android:layout_centerVertical="true"
                     android:layout_height="wrap_content" />
             </RelativeLayout>
