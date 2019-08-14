@@ -12,7 +12,7 @@
             android:title="账号" />
         <item
             android:id="@+id/nav_advice"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/tougao"
             android:title="反馈投稿"
             app:actionViewClass="android.widget.TextView" />
         <item
@@ -30,11 +30,11 @@
         <menu>
             <item
                 android:id="@+id/nav_protocol"
-                android:icon="@drawable/ic_menu_gallery"
+                android:icon="@drawable/yinsixieyi"
                 android:title="服务协议" />
             <item
                 android:id="@+id/nav_about"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@drawable/guanyu"
                 android:title="关于" />
         </menu>
     </item>

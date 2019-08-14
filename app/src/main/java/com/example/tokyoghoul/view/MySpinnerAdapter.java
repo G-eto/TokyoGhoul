@@ -26,6 +26,11 @@ public class MySpinnerAdapter extends BaseAdapter {
     private int m_id;
 
     //端口图片[]
+    private int[] iconPic = new int[]{R.drawable.qq, R.drawable.weixin, R.drawable.xiaomi,
+            R.drawable.huawei, R.drawable.pingguo, R.drawable.meizu,R.drawable.oppo,
+            R.drawable.vivo ,R.drawable.bilibili, R.drawable.zhanghao};
+    private String[] portText = new String[]{"QQ", "微信", "小米", "华为", "苹果", "魅族", "oppo","vivo",
+            "b站", "无"};
 
     public MySpinnerAdapter(Context context, List<Account> list, int m_id){
         this.mContext = context;
@@ -63,7 +68,14 @@ public class MySpinnerAdapter extends BaseAdapter {
         TextView role = convertView.findViewById(R.id.tv_role);
         TextView number = convertView.findViewById(R.id.tv_number);
 
-        img_port.setImageResource(R.drawable.ic_menu_send);
+        for(int i = 0; i < portText.length; i++){
+            if(mList.get(position).getAccount_port().equals(portText[i])){
+                img_port.setImageResource(iconPic[i]);
+                break;
+            }
+        }
+
+
         port.setText(mList.get(position).getAccount_port());
         role.setText(mList.get(position).getAccount_role());
         number.setText(mList.get(position).getAccount_number());

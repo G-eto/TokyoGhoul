@@ -6,6 +6,8 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -69,6 +71,8 @@ public class ItemListActivity extends AppCompatActivity {
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
+//    Typeface typeface = Typeface.createFromAsset(getAssets(), "fonnts/materialdesignicons-webfont.ttf");
+//        tv_sz1.setTypeface(typeface);
     private boolean mTwoPane;
     private static String mark = "";
     private static int mark_id = -1;
@@ -76,7 +80,10 @@ public class ItemListActivity extends AppCompatActivity {
     DatabaseHelper db;
     public static RecyclerView recyclerView;
 
-    public static String jsondata = "";
+    private static String jsondata = "";
+    private static String jsondata_psp = "";
+    private static String jsondata_play = "";
+    private static String jsondata_cdk = "";
 
     private static ClipboardManager cm;
     private static ClipData mClipData;
@@ -232,11 +239,12 @@ public class ItemListActivity extends AppCompatActivity {
             for(int i = 0; i < list.size(); i++) {
                 DummyContent.ITEMS.add(new DummyContent.DummyItem(
                         list.get(i).getId()+"", list.get(i).getPsp_title(),
-                        list.get(i).getPsp_kind(), list.get(i).getPsp_time(),
-                        list.get(i).getPsp_author(), list.get(i).getPsp_text()));
+                        list.get(i).getPsp_kind(), list.get(i).getPsp_author(),
+                        list.get(i).getPsp_time(), list.get(i).getPsp_text(),
+                        list.get(i).getPsp_webid(), list.get(i).getPsp_web_edition()));
             }
             adapter = new SimpleItemRecyclerViewAdapter(this, DummyContent.ITEMS, mTwoPane, mark_id);
-            recyclerView.setAdapter(adapter);
+            //recyclerView.setAdapter(adapter);
             //adapter.notifyDataSetChanged();
             //tips.dismiss();
         }
@@ -244,11 +252,13 @@ public class ItemListActivity extends AppCompatActivity {
         else{
             //tips.show();
 
+
+            reFreshData();
             DummyContent.setVisitFlag(true);
             adapter = new SimpleItemRecyclerViewAdapter(this, DummyContent.ITEMS, mTwoPane, mark_id);
-            recyclerView.setAdapter(adapter);
-            while (DummyContent.isVisit()){
-            }
+            //recyclerView.setAdapter(adapter);
+//            while (DummyContent.isVisit()){
+//            }
             //tips.dismiss();
 
         }
@@ -412,12 +422,14 @@ public class ItemListActivity extends AppCompatActivity {
             if(mark_id == 0){
                 holder.delete.setVisibility(View.VISIBLE);
 
-                if(DummyContent.ITEMS.get(holder.getAdapterPosition()).web_id > 0 &&
-                        DummyContent.ITEMS.get(holder.getAdapterPosition()).web_edition == 0) {
+                if(DummyContent.ITEMS.get(holder.getAdapterPosition()).web_id == 0 ) {
                     //holder.update.setVisibility(View.GONE);
-                }
-                else
                     holder.update.setVisibility(View.VISIBLE);
+                }
+                else{
+
+                }
+                    //holder.update.setVisibility(View.VISIBLE);
                 holder.delete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -629,6 +641,8 @@ public class ItemListActivity extends AppCompatActivity {
     public void reFreshData(){
         tips = new SVProgressHUD(this);
         tips.showWithStatus("加载中...");
+        //Gadget.showToast(mark, this);
+        DummyContent.ITEMS.clear();
         final Thread thread=new Thread(new Runnable() {
             @Override
             public void run() {
@@ -636,33 +650,36 @@ public class ItemListActivity extends AppCompatActivity {
                 if(mark.equals(way[1])){
                     mark_id = 1;
                     url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_psp.json";
+                    jsondata_psp = getJsondataFromWeb(url, jsondata_psp);
+                    jsondata = jsondata_psp;
                 }
                 //play
                 else if(mark.equals(way[2])){
                     mark_id = 2;
                     url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_activity.json";
+                    jsondata_play = getJsondataFromWeb(url, jsondata_play);
+                    jsondata = jsondata_play;
                 }
                 //cdk
                 else if(mark.equals(way[3])){
                     mark_id = 3;
                     url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_cdk.json";
+                    jsondata_cdk = getJsondataFromWeb(url, jsondata_cdk);
+                    jsondata = jsondata_cdk;
                 }
 
-                int op = 0;
-                while (jsondata.equals("")) {
-                    if(++op > 10){
-                        Log.d("请求失败","try 10 times");
-                        break;
-                    }
-                    try {
-                        jsondata = HtmlService.getHtml(url);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+                Log.d("urls:",url);
 
                 DummyContent.ITEMS.addAll(getJson(jsondata));
                 DummyContent.setVisitFlag(false);
+
+                recyclerView.post(new Runnable(){
+                    @Override
+                    public void run() {
+                        recyclerView.getAdapter().notifyDataSetChanged();
+                    }
+
+                });
                 tips.dismiss();
             }
 
@@ -671,4 +688,23 @@ public class ItemListActivity extends AppCompatActivity {
         thread.start();
     }
 
+    private String getJsondataFromWeb(String url, String s){
+        int op = 0;
+        if(!s.equals("")){
+            return s;
+        }
+        String jsd = "";
+        while (jsd.equals("")) {
+            if(++op > 10){
+                Log.d("请求失败","try 10 times");
+                break;
+            }
+            try {
+                jsd = HtmlService.getHtml(url);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return jsd;
+    }
 }

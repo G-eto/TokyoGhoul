@@ -63,8 +63,9 @@ public class DateUtil {
                 + String.format("%02d",day);
 
         String time = String.format("%02d",hour)+":"
-                + String.format("%02d",minute)+":"
-                + String.format("%02d",second);
+                + String.format("%02d",minute);
+//                +":"
+//                + String.format("%02d",second);
         return date + " "+time;
     }
 

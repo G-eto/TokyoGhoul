@@ -77,8 +77,8 @@ public class ItemDetailFragment extends Fragment {
         // Show the dummy content as text in a TextView.
         markdownView = rootView.findViewById(R.id.item_detail);
         if(isUrl){
-            //markdownView.loadMarkdownFromUrl(detail);
-            markdownView.loadMarkdownFromUrl("https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/README.md");
+            markdownView.loadMarkdownFromUrl(detail);
+            //markdownView.loadMarkdownFromUrl("https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/README.md");
         }
         else{
             //markdownView.loadMarkdownFromUrl("https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/README.md");

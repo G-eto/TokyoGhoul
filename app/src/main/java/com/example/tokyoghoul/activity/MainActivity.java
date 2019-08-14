@@ -2,6 +2,7 @@ package com.example.tokyoghoul.activity;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -102,14 +103,12 @@ public class MainActivity extends AppCompatActivity
     public SVProgressHUD tips;
 
 
-    private int[] unSelectTabRes = new int[]{R.drawable.ic_menu_camera
-            , R.drawable.ic_menu_gallery,
-            R.drawable.ic_menu_send,
-            R.drawable.ic_menu_share};
+    private int[] unSelectTabRes = new int[]{R.drawable.aoyi_1
+            , R.drawable.shetuan_1,
+            R.drawable.zhanghao_1};
     //选中的Tab图片
-    private int[] selectTabRes = new int[]{R.drawable.ic_menu_manage,
-            R.drawable.ic_menu_share
-            , R.drawable.ic_menu_send, R.drawable.ic_menu_manage};
+    private int[] selectTabRes = new int[]{R.drawable.aoyi,
+            R.drawable.shetuan, R.drawable.zhanghao_2};
     //Tab标题
     private String[] title = new String[]{"首页", "娱乐", "游戏", "我的"};
     private String[] way = new String[]{"record", "psp", "play", "cdk"};
@@ -117,7 +116,7 @@ public class MainActivity extends AppCompatActivity
     private ViewPager viewPager_community;
     private TabLayout tabLayout_community;
     List<Fragment> fragments_community = new ArrayList<>();
-    String[] tabTitles_community = new String[]{"角色速查", "社团管理", "我的小号"};
+    String[] tabTitles_community = new String[]{"奥义速查", "社团管理", "我的帐号"};
 
     private TextView today_time;
     private TabHost tabHost;
@@ -202,6 +201,7 @@ public class MainActivity extends AppCompatActivity
 //                }
                 switch (tabHost.getCurrentTab()){
                     case 0:
+                        ackViewId = opopSearch;
                         if(opopSearch == 0) {
                             searchView.setVisible(true);
                             addMenu.setVisible(false);
@@ -347,28 +347,32 @@ public class MainActivity extends AppCompatActivity
         Bundle bundle = new Bundle();
         bundle.putString("way", "");
         //marks = mark;
-        switch(mark) {
-            case 1: bundle.clear();
-                    bundle.putString("way", way[0]);
-                    break;
-            case 2: bundle.clear();
-                tips.showWithStatus("loading...");
-                    bundle.putString("way", way[1]);
-                    break;
-            case 3: bundle.clear();
-                tips.showWithStatus("loading...");
-                    bundle.putString("way", way[2]);
-                    break;
-            case 4: bundle.clear();
-                tips.showWithStatus("loading...");
-                    bundle.putString("way", way[3]);
-                    break;
-            default:break;
-        }
+        bundle.clear();
+        bundle.putString("way", way[mark - 1]);
+//        switch(mark) {
+//            case 1: bundle.clear();
+//                    bundle.putString("way", way[0]);
+//                    break;
+//            case 2: bundle.clear();
+//                tips.showWithStatus("loading...");
+//                    bundle.putString("way", way[1]);
+//                    break;
+//            case 3: bundle.clear();
+//                tips.showWithStatus("loading...");
+//                    bundle.putString("way", way[2]);
+//                    break;
+//            case 4: bundle.clear();
+//                tips.showWithStatus("loading...");
+//                    bundle.putString("way", way[3]);
+//                    break;
+//            default:break;
+//        }
 
-        DummyContent.ITEMS.clear();
-        if(mark > 1)
-            reFreshData();
+ //       DummyContent.ITEMS.clear();
+//        if(mark > 1) {
+//            tips.showWithStatus("loading");
+//            reFreshData();
+//        }
         intent.putExtras(bundle);
         //传入intent
         startActivity(intent);
@@ -494,8 +498,9 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_you) {
 
         } else if (id == R.id.nav_protocol) {
-            new AlertView("服务协议", "内容", new String("知道了"), null, null, this,
-                    AlertView.Style.Alert, null).show();
+//            new AlertView("服务协议", "内容", new String("知道了"), null, null, this,
+//                    AlertView.Style.Alert, null).show();
+            showProtocol();
 
         } else if (id == R.id.nav_advice) {
             showNoteDialog(false, new Upload(), item.getActionView(), 0);
@@ -515,7 +520,12 @@ public class MainActivity extends AppCompatActivity
 //            dia.onWindowAttributesChanged(lp);
 
         } else if (id == R.id.nav_about) {
-            new AlertView("关于", "内容", new String("知道了"), null , null, this,
+            String about = "战纪小本本\n" +
+                            "此app为学习兴趣交流而开发，不做商业用途;" +
+                            "为保证隐私安全，除了反馈需要上传反馈内容，其他数据均存储在本地;\n" +
+                            "如何联系：投稿反馈(大佬们别打我)\n" +
+                            "ps:反馈的联系方式由用户自愿填写。\n更多请阅读服务协议。";
+            new AlertView("关于", about, new String("确定"), null , null, this,
                     AlertView.Style.Alert, null).show();
         }else if (id == R.id.nav_data) {
 
@@ -592,7 +602,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void reFreshData(){
-       // tips.showWithStatus("loading");
         DummyContent.setVisitFlag(true);
         DummyContent.ITEMS.clear();
         Thread thread = new Thread(new Runnable() {
@@ -633,6 +642,8 @@ public class MainActivity extends AppCompatActivity
         });
         DummyContent.setVisitFlag(true);
         thread.start();
+        //while (DummyContent.isVisit()){}
+        //tips.dismiss();
     }
 
     private List<DummyContent.DummyItem> getJsons(String jsonStr){
@@ -765,5 +776,22 @@ public class MainActivity extends AppCompatActivity
         });
 
         alertDialog.show();
+    }
+
+    private void showProtocol() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = getLayoutInflater().inflate(R.layout.protocal, null);
+        MarkdownView markdownView = view.findViewById(R.id.protocol_show);
+        String url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/markdownUrls/data_protocol.md";
+        markdownView.loadMarkdownFromUrl(url);
+        builder.setTitle("服务协议");
+        builder.setView(view);
+        builder.setPositiveButton("我已阅读该协议", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        builder.show();
     }
 }

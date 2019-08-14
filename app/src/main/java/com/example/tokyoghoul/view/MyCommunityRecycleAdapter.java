@@ -74,7 +74,7 @@ public class MyCommunityRecycleAdapter extends RecyclerView.Adapter<MyCommunityR
 //        db.insertCommunity(7770,"哈子","08/07 13:14",2);
 //        db.insertCommunity(3,"孩子","08/01 13:14",4);
 //
-//        db.insertAccount("QQ","焰灵姬","960789981","xxx");
+//        db.insertAccount("qq","焰灵姬","960789981","xxx");
 //        db.insertAccount("微信","小号","9607899819","xxx");
 //        db.insertAccount("华为","冷月","9607","xxx");
 //        db.insertAccount("小米","test","xiaomi969981","xxx");

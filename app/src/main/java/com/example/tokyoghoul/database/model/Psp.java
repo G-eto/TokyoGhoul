@@ -46,7 +46,7 @@ public class Psp {
         this.psp_author = author;
         this.psp_text = psp_text;
         this.psp_webid = 0;
-        psp_web_edition = 0;
+        this.psp_web_edition = 0;
     }
     public Psp(String psp_title, String psp_kind, String time, String author,
                String psp_text, int psp_webid, int psp_web_edition){

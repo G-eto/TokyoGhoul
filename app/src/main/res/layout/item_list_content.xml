@@ -56,7 +56,7 @@
     <!-- 以下都是侧滑菜单的内容依序排列 -->
     <Button
         android:id="@+id/btnDelete"
-        android:layout_width="75dp"
+        android:layout_width="80dp"
         android:layout_height="match_parent"
         android:background="#FF0000"
         android:visibility="gone"
@@ -65,7 +65,7 @@
 
     <Button
         android:id="@+id/btnUpdate"
-        android:layout_width="60dp"
+        android:layout_width="80dp"
         android:visibility="gone"
         android:layout_height="match_parent"
         android:background="#00C78C"
@@ -74,7 +74,7 @@
         android:textColor="@android:color/white"/>
     <Button
         android:id="@+id/btnStar"
-        android:layout_width="60dp"
+        android:layout_width="80dp"
         android:visibility="gone"
         android:layout_height="match_parent"
         android:background="#00C78C"

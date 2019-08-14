@@ -13,7 +13,6 @@
         android:id="@+id/img_port_account"
         android:layout_width="@dimen/img_width"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_menu_share"
         android:layout_marginLeft="@dimen/margin_m"
         android:layout_margin="@dimen/margin_s"/>
     <TextView

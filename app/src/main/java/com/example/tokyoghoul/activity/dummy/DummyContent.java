@@ -30,7 +30,7 @@ public class DummyContent {
         if(visitFlag){
             return true;
         }
-        recyclerView.getAdapter().notifyDataSetChanged();
+        //recyclerView.getAdapter().notifyDataSetChanged();
         return false;
     }
     public static void setVisitFlag(boolean is){

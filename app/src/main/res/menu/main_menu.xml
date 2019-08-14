@@ -9,6 +9,6 @@
         app:showAsAction="ifRoom"/>
     <item android:id="@+id/action_add"
         android:title="add"
-        android:icon="@drawable/ic_menu_share"
+        android:icon="@drawable/add"
         app:showAsAction="ifRoom"/>
 </menu>

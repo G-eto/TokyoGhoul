@@ -38,6 +38,7 @@ public class MyAccountRecycleAdapter extends RecyclerView.Adapter<MyAccountRecyc
         public final TextView account_role;
         public final TextView account_number;
         public final TextView account_password;
+        public final ImageView port_img;
 
         public MyViewHolder(View v) {
             super(v);
@@ -46,12 +47,19 @@ public class MyAccountRecycleAdapter extends RecyclerView.Adapter<MyAccountRecyc
             account_number = (TextView) v.findViewById(R.id.number_account);
             account_password = (TextView) v.findViewById(R.id.password_account);
             account_port = (TextView) v.findViewById(R.id.port_account);
+            port_img = v.findViewById(R.id.img_port_account);
         }
     }
 
     private List<Account> mdata = new ArrayList<>();
     DatabaseHelper db;
     View mview;
+
+    private int[] iconPic = new int[]{R.drawable.qq, R.drawable.weixin, R.drawable.xiaomi,
+            R.drawable.huawei, R.drawable.pingguo, R.drawable.meizu,R.drawable.oppo,
+            R.drawable.vivo ,R.drawable.bilibili, R.drawable.zhanghao};
+    private String[] portText = new String[]{"QQ", "微信", "小米", "华为", "苹果", "魅族", "oppo","vivo",
+            "b站", "无"};
 
     public MyAccountRecycleAdapter(View view){
         db = new DatabaseHelper(view.getContext());
@@ -60,7 +68,7 @@ public class MyAccountRecycleAdapter extends RecyclerView.Adapter<MyAccountRecyc
 //        db.insertCommunity(7770,"哈子","08/07 13:14",2);
 //        db.insertCommunity(3,"孩子","08/01 13:14",4);
 ////
-//        db.insertAccount("QQ","焰灵姬","960789981","xxx");
+//        db.insertAccount("qq","焰灵姬","960789981","xxx");
 //        db.insertAccount("微信","小号","9607899819","xxx");
 //        db.insertAccount("华为","冷月","9607","xxx");
 //        db.insertAccount("小米","test","xiaomi969981","xxx");
@@ -80,11 +88,17 @@ public class MyAccountRecycleAdapter extends RecyclerView.Adapter<MyAccountRecyc
 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder myViewHolder, int position) {
-        //myViewHolder.img_port.set
         myViewHolder.account_port.setText(mdata.get(position).getAccount_port());
         myViewHolder.account_role.setText(mdata.get(position).getAccount_role());
         myViewHolder.account_number.setText(mdata.get(position).getAccount_number());
         myViewHolder.account_password.setText(mdata.get(position).getAccount_password());
+
+        for(int i = 0; i < portText.length; i++){
+            if(mdata.get(position).getAccount_port().equals(portText[i])){
+                myViewHolder.img_port.setImageResource(iconPic[i]);
+                break;
+            }
+        }
 
         myViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,14 +173,13 @@ public class MyAccountRecycleAdapter extends RecyclerView.Adapter<MyAccountRecyc
         accounts.add(new Account());
         accounts.addAll(database.getAllAccounts());
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                view.getContext(), R.array.port_array, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(view.getContext(), R.array.port_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         port.setAdapter(adapter);
 
 
-        final String[] portText = new String[]{"QQ", "微信", "小米", "华为", "苹果", "魅族", "oppo","vivo",
-                                        "b站", "其他"};
+//        final String[] portText = new String[]{"QQ", "微信", "小米", "华为", "苹果", "魅族", "oppo","vivo",
+//                                        "b站", "其他"};
         int op_port_index = 9;
         for(int i = 0; i < portText.length; i++){
             if(portText[i].equals(community.getAccount_port())){

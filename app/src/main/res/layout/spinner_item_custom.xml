@@ -20,12 +20,12 @@
             android:layout_height="match_parent">
             <ImageView
                 android:id="@+id/img_port"
+                android:layout_marginLeft="@dimen/margin_m"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_menu_share"
                 android:layout_centerVertical="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="@dimen/margin_m"/>
+                android:layout_alignParentLeft="true" />
 
             <TextView
                 android:id="@+id/tv_role"

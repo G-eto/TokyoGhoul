@@ -36,5 +36,12 @@
         <item name="android:backgroundDimEnabled">true</item>
         <!-- 是否使用背景半透明 -->
     </style>
+    <style name="StartTheme" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/start_img</item>
+    </style>
+    <style name="AppBlackTheme" parent="Theme.AppCompat.Light.NoActionBar">
+            <item name="android:windowIsTranslucent">true</item>
+            <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
 
 </resources>
