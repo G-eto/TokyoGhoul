@@ -89,6 +89,8 @@ public class ItemListActivity extends AppCompatActivity {
     private static String jsondata_play = "";
     private static String jsondata_cdk = "";
 
+    private static List<DummyContent.DummyItem> cdkBuf= new ArrayList<>();
+
     private static ClipboardManager cm;
     private static ClipData mClipData;
 
@@ -656,6 +658,10 @@ public class ItemListActivity extends AppCompatActivity {
                     url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_psp.json";
                     jsondata_psp = getJsondataFromWeb(url, jsondata_psp);
                     jsondata = jsondata_psp;
+                    Log.d("urls:",url);
+
+                    DummyContent.ITEMS.addAll(getJson(jsondata));
+                    DummyContent.setVisitFlag(false);
                 }
                 //play
                 else if(mark.equals(way[2])){
@@ -663,37 +669,23 @@ public class ItemListActivity extends AppCompatActivity {
                     url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_activity.json";
                     jsondata_play = getJsondataFromWeb(url, jsondata_play);
                     jsondata = jsondata_play;
+                    Log.d("urls:",url);
+
+                    DummyContent.ITEMS.addAll(getJson(jsondata));
+                    DummyContent.setVisitFlag(false);
                 }
                 //cdk
-                else if(mark.equals(way[3])){
+                callUIrefresh();
+
+                if(mark.equals(way[3])){
                     mark_id = 3;
-                    url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_cdk.json";
-                    jsondata_cdk = getJsondataFromWeb(url, jsondata_cdk);
-                    jsondata = jsondata_cdk;
+                    //url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_cdk.json";
+                    //jsondata_cdk = getJsondataFromWeb(url, jsondata_cdk);
+                    refreshCDK("select * from cdk");
+                    //jsondata = jsondata_cdk;
                 }
 
-                Log.d("urls:",url);
 
-                DummyContent.ITEMS.addAll(getJson(jsondata));
-                DummyContent.setVisitFlag(false);
-
-                String sql[] = new String[DummyContent.ITEMS.size()];
-                for(int i = DummyContent.ITEMS.size() - 1; i > -1; i--){
-                    sql[i] = "insert into cdk(cdk, about, date)"
-                            +"values('" + DummyContent.ITEMS.get(i).title +"',"
-                            +" '" + DummyContent.ITEMS.get(i).under_1 + "',"
-                            +" '" + DummyContent.ITEMS.get(i).under_2 + "')";
-                }
-
-                recyclerView.post(new Runnable(){
-                    @Override
-                    public void run() {
-                        recyclerView.getAdapter().notifyDataSetChanged();
-                    }
-
-                });
-                tips.dismiss();
-                refreshCDK(sql);
             }
 
         });
@@ -721,7 +713,7 @@ public class ItemListActivity extends AppCompatActivity {
         return jsd;
     }
 
-    private void refreshCDK(final String[] sql) {
+    private void refreshCDK(final String sql) {
         //final String REMOTE_IP = "ghfuuto7.2392lan.dnstoo.com:3306";
         final String URL = "jdbc:mysql://ghfuuto7.2392.dnstoo.com:5504/wakof8" +
                 "?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true&autoReconnect=true";
@@ -735,9 +727,7 @@ public class ItemListActivity extends AppCompatActivity {
                 Connection conn;
                 conn = Gadget.openConnection(URL, USER, PASSWORD);
                 System.out.println("All users info:");
-                for(int i = 0; i < sql.length; i++) {
-                    queryUpload(conn, sql[i]);
-                }
+                query(conn, sql);
                 if (conn != null) {
                     try {
                         conn.close();
@@ -751,35 +741,6 @@ public class ItemListActivity extends AppCompatActivity {
         }).start();
 
     }
-    private static boolean queryUpload(Connection conn, String sql) {
-
-        if (conn == null) {
-            return false;
-        }
-        Log.d("mysql1",sql);
-
-        Statement statement = null;
-        boolean result = false;
-
-        try {
-            statement = conn.createStatement();
-            result = statement.execute(sql);
-            Log.d("mysql1","uploadSuccess");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (statement != null) {
-                    statement.close();
-                    statement = null;
-                }
-
-            } catch (SQLException sqle) {
-
-            }
-        }
-        return result;
-    }
 
     public static boolean query(Connection conn, String sql) {
 
@@ -791,10 +752,24 @@ public class ItemListActivity extends AppCompatActivity {
         Statement statement = null;
         ResultSet result = null;
 
-        List<DummyContent.DummyItem> mlist = new ArrayList<>();
+        //List<DummyContent.DummyItem> mlist = new ArrayList<>();
         try {
             statement = conn.createStatement();
             result = statement.executeQuery(sql);
+
+
+            result.last();
+            int count = result.getRow(); //获得ResultSet的总行数
+
+            Log.d("mysql1",count+"个web");
+            int count_local = cdkBuf.size();
+            Log.d("mysql1",count+"个local");
+            if(count <= count_local){
+                DummyContent.ITEMS.clear();
+                DummyContent.ITEMS.addAll(cdkBuf);
+                callUIrefresh();
+                return true;
+            }
 
             if (result != null && result.first()) {
                 int idColumnIndex = result.findColumn("id");
@@ -805,7 +780,7 @@ public class ItemListActivity extends AppCompatActivity {
                 Log.d("mysql1",55+result.toString());
                 System.out.println("id\t\t" + "name");
                 while (!result.isAfterLast()) {
-                    mlist.add(new DummyContent.DummyItem(String.valueOf(result.getInt(idColumnIndex)),
+                    cdkBuf.add(new DummyContent.DummyItem(String.valueOf(result.getInt(idColumnIndex)),
                             result.getString(cdkColumnIndex), result.getString(aboutColumnIndex),
                             result.getString(dateColumnIndex)));
 
@@ -813,7 +788,8 @@ public class ItemListActivity extends AppCompatActivity {
                 }
                 Log.d("mysql1","66");
                 DummyContent.ITEMS.clear();
-                DummyContent.ITEMS.addAll(mlist);
+                DummyContent.ITEMS.addAll(cdkBuf);
+                callUIrefresh();
                 Log.d("mysql1","777");
             }
         } catch (SQLException e) {
@@ -834,5 +810,15 @@ public class ItemListActivity extends AppCompatActivity {
             }
         }
         return true;
+    }
+    private static void callUIrefresh(){
+        recyclerView.post(new Runnable(){
+            @Override
+            public void run() {
+                recyclerView.getAdapter().notifyDataSetChanged();
+            }
+
+        });
+        tips.dismiss();
     }
 }
