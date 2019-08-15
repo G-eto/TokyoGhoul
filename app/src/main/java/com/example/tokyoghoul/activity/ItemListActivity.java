@@ -816,9 +816,9 @@ public class ItemListActivity extends AppCompatActivity {
             @Override
             public void run() {
                 recyclerView.getAdapter().notifyDataSetChanged();
+                tips.dismiss();
             }
 
         });
-        tips.dismiss();
     }
 }
