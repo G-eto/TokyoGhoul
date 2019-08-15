@@ -49,7 +49,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -543,7 +547,7 @@ public class ItemListActivity extends AppCompatActivity {
                 }
             }
             else if(mark_id == 3){
-                JSONArray data=dataJson.getJSONArray("CDK");
+                JSONArray data = dataJson.getJSONArray("CDK");
                 for(int i = 0; i < data.length(); i++) {
                     JSONObject info = data.getJSONObject(i);
                     int id = info.getInt("id");
@@ -673,6 +677,14 @@ public class ItemListActivity extends AppCompatActivity {
                 DummyContent.ITEMS.addAll(getJson(jsondata));
                 DummyContent.setVisitFlag(false);
 
+                String sql[] = new String[DummyContent.ITEMS.size()];
+                for(int i = DummyContent.ITEMS.size() - 1; i > -1; i--){
+                    sql[i] = "insert into cdk(cdk, about, date)"
+                            +"values('" + DummyContent.ITEMS.get(i).title +"',"
+                            +" '" + DummyContent.ITEMS.get(i).under_1 + "',"
+                            +" '" + DummyContent.ITEMS.get(i).under_2 + "')";
+                }
+
                 recyclerView.post(new Runnable(){
                     @Override
                     public void run() {
@@ -681,6 +693,7 @@ public class ItemListActivity extends AppCompatActivity {
 
                 });
                 tips.dismiss();
+                refreshCDK(sql);
             }
 
         });
@@ -706,5 +719,120 @@ public class ItemListActivity extends AppCompatActivity {
             }
         }
         return jsd;
+    }
+
+    private void refreshCDK(final String[] sql) {
+        //final String REMOTE_IP = "ghfuuto7.2392lan.dnstoo.com:3306";
+        final String URL = "jdbc:mysql://ghfuuto7.2392.dnstoo.com:5504/wakof8" +
+                "?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true&autoReconnect=true";
+
+        final String USER = "wakof8_f";
+        final String PASSWORD = "n549tjkt";
+
+        new Thread(new Runnable() {
+            public void run() {
+                System.out.println("bbbbbbb");
+                Connection conn;
+                conn = Gadget.openConnection(URL, USER, PASSWORD);
+                System.out.println("All users info:");
+                for(int i = 0; i < sql.length; i++) {
+                    queryUpload(conn, sql[i]);
+                }
+                if (conn != null) {
+                    try {
+                        conn.close();
+                    } catch (SQLException e) {
+                        conn = null;
+                    } finally {
+                        conn = null;
+                    }
+                }
+            }
+        }).start();
+
+    }
+    private static boolean queryUpload(Connection conn, String sql) {
+
+        if (conn == null) {
+            return false;
+        }
+        Log.d("mysql1",sql);
+
+        Statement statement = null;
+        boolean result = false;
+
+        try {
+            statement = conn.createStatement();
+            result = statement.execute(sql);
+            Log.d("mysql1","uploadSuccess");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                    statement = null;
+                }
+
+            } catch (SQLException sqle) {
+
+            }
+        }
+        return result;
+    }
+
+    public static boolean query(Connection conn, String sql) {
+
+        if (conn == null) {
+            return false;
+        }
+        Log.d("mysql1","44");
+
+        Statement statement = null;
+        ResultSet result = null;
+
+        List<DummyContent.DummyItem> mlist = new ArrayList<>();
+        try {
+            statement = conn.createStatement();
+            result = statement.executeQuery(sql);
+
+            if (result != null && result.first()) {
+                int idColumnIndex = result.findColumn("id");
+                int cdkColumnIndex = result.findColumn("cdk");
+                int aboutColumnIndex = result.findColumn("about");
+                int dateColumnIndex = result.findColumn("date");
+
+                Log.d("mysql1",55+result.toString());
+                System.out.println("id\t\t" + "name");
+                while (!result.isAfterLast()) {
+                    mlist.add(new DummyContent.DummyItem(String.valueOf(result.getInt(idColumnIndex)),
+                            result.getString(cdkColumnIndex), result.getString(aboutColumnIndex),
+                            result.getString(dateColumnIndex)));
+
+                    result.next();
+                }
+                Log.d("mysql1","66");
+                DummyContent.ITEMS.clear();
+                DummyContent.ITEMS.addAll(mlist);
+                Log.d("mysql1","777");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (result != null) {
+                    result.close();
+                    result = null;
+                }
+                if (statement != null) {
+                    statement.close();
+                    statement = null;
+                }
+
+            } catch (SQLException sqle) {
+
+            }
+        }
+        return true;
     }
 }

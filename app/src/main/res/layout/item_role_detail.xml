@@ -127,7 +127,7 @@
         </RelativeLayout>
         <TextView
             android:id="@+id/stone_suit_1_introduce"
-            android:layout_marginLeft="@dimen/margin_sm_w2"
+            android:layout_marginLeft="@dimen/margin_sx"
             android:layout_marginRight="@dimen/margin_sm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

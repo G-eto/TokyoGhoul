@@ -21,6 +21,7 @@
     <dimen name="margin_s">7dp</dimen>
     <dimen name="margin_m">15dp</dimen>
     <dimen name="margin_sm">20dp</dimen>
+    <dimen name="margin_sx">35dp</dimen>
     <dimen name="margin_xm">50dp</dimen>
     <dimen name="margin_sm_w2">90dp</dimen>
 
