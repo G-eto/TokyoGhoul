@@ -47,7 +47,7 @@
     <string name="tool_play">往期活动</string>
     <string name="tool_rune">奥义查询</string>
     <string name="tool_record">我的手记</string>
-    <string name="title_item_list">数据加载自网络</string>
+    <string name="title_item_list"> </string>
     <string name="title_item_detail">Item Detail</string>
     <string name="title_activity_rune">奥义查询</string>
 

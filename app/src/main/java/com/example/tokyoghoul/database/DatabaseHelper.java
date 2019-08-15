@@ -617,6 +617,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     null, null, null, null);
             if(cursor.getCount() > 0){
 //            return cursor.getInt(cursor.getColumnIndex(Psp.COLUMN_PSP_WEB_ID));
+                db.close();
+                cursor.moveToFirst();
+                psp.setId(cursor.getInt(cursor.getColumnIndex(Psp.COLUMN_PSP_ID)));
+                updatePsp(psp);
                 return 0;
             }
         }
@@ -665,8 +669,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 cursor.moveToFirst();
                 Log.d("数据库", cursor.getString(cursor.getColumnIndex(Psp.COLUMN_PSP_WEB_EDITION)) + "");
-                if (cursor.getInt(cursor.getColumnIndex(Psp.COLUMN_PSP_WEB_EDITION)) >= psp.getPsp_web_edition())
+                if (cursor.getInt(cursor.getColumnIndex(Psp.COLUMN_PSP_WEB_EDITION)) >= psp.getPsp_web_edition()) {
+                    Log.d("hiho",cursor.getInt(cursor.getColumnIndex(Psp.COLUMN_PSP_WEB_EDITION)) + " "+ psp.getPsp_web_edition());
+                    db.close();
                     return 0;
+                }
             }
         }
         ContentValues values = new ContentValues();
