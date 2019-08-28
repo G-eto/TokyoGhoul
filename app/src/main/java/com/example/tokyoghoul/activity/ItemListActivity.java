@@ -211,7 +211,7 @@ public class ItemListActivity extends AppCompatActivity {
         if(mark_id == 3) {
             getMenuInflater().inflate(R.menu.main, menu);
             menu.findItem(R.id.action_search).setVisible(false);
-            //menu.findItem(R.id.action_todo).setVisible(false);
+            menu.findItem(R.id.action_todo).setVisible(false);
         }
         return true;
     }
