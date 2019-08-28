@@ -30,11 +30,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bigkoo.alertview.AlertView;
+import com.bigkoo.alertview.OnItemClickListener;
+import com.bigkoo.pickerview.builder.TimePickerBuilder;
+import com.bigkoo.pickerview.listener.OnTimeSelectListener;
+import com.bigkoo.pickerview.view.TimePickerView;
 import com.bigkoo.svprogresshud.SVProgressHUD;
 import com.example.tokyoghoul.R;
 
 import com.example.tokyoghoul.activity.dummy.DummyContent;
 import com.example.tokyoghoul.database.DatabaseHelper;
+import com.example.tokyoghoul.database.model.CDKs;
+import com.example.tokyoghoul.database.model.CommunityManage;
 import com.example.tokyoghoul.database.model.Psp;
 import com.example.tokyoghoul.tool.DateUtil;
 import com.example.tokyoghoul.tool.Gadget;
@@ -50,11 +57,11 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -81,6 +88,7 @@ public class ItemListActivity extends AppCompatActivity {
     private static String mark = "";
     private static int mark_id = -1;
     private String[] way = new String[]{"record", "psp", "play", "cdk"};
+    private String[] Title = new String[]{"我的手记", "玩家攻略", "活动记录", "兑换码"};
     DatabaseHelper db;
     public static RecyclerView recyclerView;
 
@@ -106,7 +114,7 @@ public class ItemListActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitle(getTitle());
+        //toolbar.setTitle(getTitle());
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -132,7 +140,7 @@ public class ItemListActivity extends AppCompatActivity {
         else if(mark.equals(way[3])){
             mark_id = 3;
         }
-
+        toolbar.setTitle(Title[mark_id]);
 
 
         //获取剪贴板管理器：
@@ -199,6 +207,11 @@ public class ItemListActivity extends AppCompatActivity {
             //add
 
         }
+        if(mark_id == 3) {
+            getMenuInflater().inflate(R.menu.main, menu);
+            menu.findItem(R.id.action_search).setVisible(false);
+            menu.findItem(R.id.action_add).setVisible(false);
+        }
         return true;
     }
 
@@ -218,7 +231,11 @@ public class ItemListActivity extends AppCompatActivity {
         }
         else if(id == R.id.action_todo){
             //add
-            showNoteDialog(false, new Psp(), recyclerView, 0);
+            if(mark_id == 0)
+                showNoteDialog(false, new Psp(), recyclerView, 0);
+            else if(mark_id == 3){
+                showCDKDialog(false, new CDKs(), recyclerView, 0);
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -319,8 +336,41 @@ public class ItemListActivity extends AppCompatActivity {
 
         adapter.setOnLongClickListener(new SimpleItemRecyclerViewAdapter.OnLongClick() {
             @Override
-            public void onLongClick(int position) {
-                Toast.makeText(ItemListActivity.this,"长按了一下"+position, Toast.LENGTH_SHORT).show();
+            public void onLongClick(final int position) {
+                DummyContent.DummyItem item = DummyContent.ITEMS.get(position);
+                //Toast.makeText(ItemListActivity.this,"长按了一下"+position, Toast.LENGTH_SHORT).show();
+                if(mark_id == 3){
+                    final AlertView dialog = new AlertView("选择操作",
+                            "兑换码管理员",
+                            "取消",
+                            new String[]{"删除"},
+                            new String[]{"修改"},
+                            recyclerView.getContext(),
+                            AlertView.Style.ActionSheet,
+                            new OnItemClickListener(){
+                                @Override
+                                public void onItemClick(Object o, int position_son) {
+                                    //Toast.makeText(v.getContext(), "点击了第" + position_son + "个", Toast.LENGTH_SHORT).show();
+                                    final int op =  position;
+                                    switch (position_son){
+                                        case 0:
+                                            //delete
+                                            String sql = "delete from cdk where id = "+ DummyContent.ITEMS.get(op).id;
+                                            mySqlCDK(sql);
+                                            DummyContent.ITEMS.remove(op);
+                                            adapter.notifyItemRemoved(op);
+                                            break;
+                                        case 1:
+                                            //编辑社团信息
+                                            CDKs cdK = DummyContent.ITEMS.get(op).toCDK();
+                                            showCDKDialog(true, cdK, recyclerView, op);
+                                            break;
+                                    }
+                                }
+                            });
+                    dialog.show();
+                    //Gadget.showToast("操作完成", recyclerView.getContext());
+                }
             }
         });
         recyclerView.setAdapter(adapter);
@@ -644,6 +694,70 @@ public class ItemListActivity extends AppCompatActivity {
 
     }
 
+    public static void showCDKDialog(final boolean shouldUpdate, final CDKs psp, final View _view, final int position) {
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from((_view.getContext()));
+        final View view = layoutInflaterAndroid.inflate(R.layout.dialog_cdk, null);
+
+        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(view.getContext());
+        alertDialogBuilderUserInput.setView(view);
+
+        final EditText inputTitle = view.findViewById(R.id.input_cdk);
+        final EditText inputText = view.findViewById(R.id.input_cdk_text);
+        final Button cancel = view.findViewById(R.id.dialog_cdk_cancel);
+        final Button save = view.findViewById(R.id.dialog_cdk_save);
+
+        save.setHint(!shouldUpdate ? "保存" : "修改");
+
+        if (shouldUpdate && psp.getId() > 0) {
+            inputTitle.setText(psp.getCdk());
+            inputText.setText(psp.getCdk_text());
+        }
+        alertDialogBuilderUserInput
+                .setCancelable(false);
+
+        final AlertDialog alertDialog = alertDialogBuilderUserInput.create();
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CDKs psp_buf = psp;
+                psp_buf.setCdk(inputTitle.getText().toString());
+                psp_buf.setCdk_text(inputText.getText().toString());
+                psp_buf.setCdk_date(DateUtil.getDateMySql());
+                //DatabaseHelper db = new DatabaseHelper(recyclerView.getContext());
+                String sql = "";
+                if(shouldUpdate){
+                    sql = "update cdk set cdk =  '" + psp_buf.getCdk() +"',"
+                            + " about = '" + psp_buf.getCdk_text()
+                            + "' where id = " + psp.getId();
+                    DummyContent.ITEMS.set(position, psp_buf.toDummyItem());
+
+                    recyclerView.getAdapter().notifyItemChanged(position);
+                }
+                else {
+                    sql = "insert into cdk (cdk, about, date) values(" +
+                            "'"+psp_buf.getCdk()+"', '"
+                            + psp_buf.getCdk_text()+"', '"
+                            + psp_buf.getCdk_date() + "')";
+                    Log.d("insert:",psp_buf.getId()+"");
+                    DummyContent.ITEMS.add(0, psp_buf.toDummyItem());
+                    recyclerView.getAdapter().notifyItemInserted(0);
+                }
+                mySqlCDK(sql);
+                alertDialog.dismiss();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
+
+    }
+
     public void reFreshData(){
         tips = new SVProgressHUD(this);
         tips.showWithStatus("加载中...");
@@ -681,7 +795,7 @@ public class ItemListActivity extends AppCompatActivity {
                     mark_id = 3;
                     //url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_cdk.json";
                     //jsondata_cdk = getJsondataFromWeb(url, jsondata_cdk);
-                    refreshCDK("select * from cdk");
+                    refreshCDK("select * from cdk order by date DESC");
                     //jsondata = jsondata_cdk;
                 }
 
@@ -713,7 +827,7 @@ public class ItemListActivity extends AppCompatActivity {
         return jsd;
     }
 
-    private void refreshCDK(final String sql) {
+    private static void refreshCDK(final String sql) {
         //final String REMOTE_IP = "ghfuuto7.2392lan.dnstoo.com:3306";
         final String URL = "jdbc:mysql://ghfuuto7.2392.dnstoo.com:5504/wakof8" +
                 "?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true&autoReconnect=true";
@@ -821,4 +935,61 @@ public class ItemListActivity extends AppCompatActivity {
 
         });
     }
+
+    private static void mySqlCDK(final String sql) {
+        //final String REMOTE_IP = "ghfuuto7.2392lan.dnstoo.com:3306";
+        final String URL = "jdbc:mysql://ghfuuto7.2392.dnstoo.com:5504/wakof8" +
+                "?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true&autoReconnect=true";
+
+        final String USER = "wakof8_f";
+        final String PASSWORD = "n549tjkt";
+
+        new Thread(new Runnable() {
+            public void run() {
+                System.out.println("bbbbbbb");
+                Connection conn;
+                conn = Gadget.openConnection(URL, USER, PASSWORD);
+                System.out.println("All users info:");
+                queryCDK(conn, sql);
+                if (conn != null) {
+                    try {
+                        conn.close();
+                    } catch (SQLException e) {
+                        conn = null;
+                    } finally {
+                        conn = null;
+                    }
+                }
+            }
+        }).start();
+    }
+    public static boolean queryCDK(Connection conn, String sql) {
+
+        if (conn == null) {
+            return false;
+        }
+        Log.d("mysql2","44");
+
+        Statement statement = null;
+
+        try {
+            statement = conn.createStatement();
+            //result = statement.executeQuery(sql);
+            statement.execute(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                    statement = null;
+                }
+
+            } catch (SQLException sqle) {
+
+            }
+        }
+        return true;
+    }
+
 }
