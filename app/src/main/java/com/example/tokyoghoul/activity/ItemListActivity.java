@@ -98,6 +98,7 @@ public class ItemListActivity extends AppCompatActivity {
     private static String jsondata_cdk = "";
 
     private static List<DummyContent.DummyItem> cdkBuf= new ArrayList<>();
+    private static List<DummyContent.DummyItem> pspBuf= new ArrayList<>();
 
     private static ClipboardManager cm;
     private static ClipData mClipData;
@@ -210,7 +211,7 @@ public class ItemListActivity extends AppCompatActivity {
         if(mark_id == 3) {
             getMenuInflater().inflate(R.menu.main, menu);
             menu.findItem(R.id.action_search).setVisible(false);
-            menu.findItem(R.id.action_add).setVisible(false);
+            //menu.findItem(R.id.action_todo).setVisible(false);
         }
         return true;
     }
@@ -769,6 +770,7 @@ public class ItemListActivity extends AppCompatActivity {
                 String url = "";
                 if(mark.equals(way[1])){
                     mark_id = 1;
+                    /*
                     url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_psp.json";
                     jsondata_psp = getJsondataFromWeb(url, jsondata_psp);
                     jsondata = jsondata_psp;
@@ -776,6 +778,8 @@ public class ItemListActivity extends AppCompatActivity {
 
                     DummyContent.ITEMS.addAll(getJson(jsondata));
                     DummyContent.setVisitFlag(false);
+                    */
+                    refreshPSP("select * from psp order by time DESC");
                 }
                 //play
                 else if(mark.equals(way[2])){
@@ -925,6 +929,7 @@ public class ItemListActivity extends AppCompatActivity {
         }
         return true;
     }
+
     private static void callUIrefresh(){
         recyclerView.post(new Runnable(){
             @Override
@@ -980,6 +985,110 @@ public class ItemListActivity extends AppCompatActivity {
             e.printStackTrace();
         } finally {
             try {
+                if (statement != null) {
+                    statement.close();
+                    statement = null;
+                }
+
+            } catch (SQLException sqle) {
+
+            }
+        }
+        return true;
+    }
+
+    private static void refreshPSP(final String sql) {
+        //final String REMOTE_IP = "ghfuuto7.2392lan.dnstoo.com:3306";
+        final String URL = "jdbc:mysql://ghfuuto7.2392.dnstoo.com:5504/wakof8" +
+                "?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true&autoReconnect=true";
+
+        final String USER = "wakof8_f";
+        final String PASSWORD = "n549tjkt";
+
+        new Thread(new Runnable() {
+            public void run() {
+                System.out.println("bbbbbbb");
+                Connection conn;
+                conn = Gadget.openConnection(URL, USER, PASSWORD);
+                System.out.println("All users info:");
+                queryPSP(conn, sql);
+                if (conn != null) {
+                    try {
+                        conn.close();
+                    } catch (SQLException e) {
+                        conn = null;
+                    } finally {
+                        conn = null;
+                    }
+                }
+            }
+        }).start();
+
+    }
+
+    public static boolean queryPSP(Connection conn, String sql) {
+
+        if (conn == null) {
+            return false;
+        }
+        Log.d("mysql1","44");
+
+        Statement statement = null;
+        ResultSet result = null;
+
+        //List<DummyContent.DummyItem> mlist = new ArrayList<>();
+        try {
+            statement = conn.createStatement();
+            result = statement.executeQuery(sql);
+
+
+            result.last();
+            int count = result.getRow(); //获得ResultSet的总行数
+
+            Log.d("mysql1",count+"个web");
+            int count_local = pspBuf.size();
+            Log.d("mysql1",count+"个local");
+            if(count <= count_local){
+                DummyContent.ITEMS.clear();
+                DummyContent.ITEMS.addAll(pspBuf);
+                callUIrefresh();
+                return true;
+            }
+
+            if (result != null && result.first()) {
+                int idColumnIndex = result.findColumn("id");
+                int editionColumnIndex = result.findColumn("edition");
+                int kindColumnIndex = result.findColumn("kind");
+                int titleColumnIndex = result.findColumn("title");
+                int authorColumnIndex = result.findColumn("author");
+                int contentColumnIndex = result.findColumn("content");
+                int timeColumnIndex = result.findColumn("time");
+
+                Log.d("mysql1",55+result.toString());
+                System.out.println("id\t\t" + "name");
+                while (!result.isAfterLast()) {
+                    pspBuf.add(new DummyContent.DummyItem(String.valueOf(result.getInt(idColumnIndex)),
+                            result.getString(titleColumnIndex), result.getString(kindColumnIndex),
+                            result.getString(authorColumnIndex), result.getString(timeColumnIndex),
+                            result.getString(contentColumnIndex), result.getInt(idColumnIndex),
+                            result.getInt(editionColumnIndex)));
+                    //String.valueOf(id), title, kind, author, time, content, id, edition)
+                    result.next();
+                }
+                Log.d("mysql1","66");
+                DummyContent.ITEMS.clear();
+                DummyContent.ITEMS.addAll(pspBuf);
+                callUIrefresh();
+                Log.d("mysql1","777");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (result != null) {
+                    result.close();
+                    result = null;
+                }
                 if (statement != null) {
                     statement.close();
                     statement = null;

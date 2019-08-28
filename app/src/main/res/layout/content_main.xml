@@ -153,6 +153,7 @@
                 android:id="@+id/tool_layout_play"
                 android:layout_width="match_parent"
                 android:layout_marginTop="@dimen/margin_m"
+                android:visibility="gone"
                 android:layout_height="@dimen/vitality">
                 <ImageView
                     android:id="@+id/tool_img_play"

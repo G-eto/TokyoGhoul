@@ -40,7 +40,8 @@ public class LineChartDiamonds{
     public LineChartDiamonds(LineChart lineChart, Context context, List<Logs> list){
         db = new DatabaseHelper(context);
 
-        this.list.addAll(db.getAllLogs("ASC"));
+        this.list.addAll(db.get7Logs("ASC"));
+
         mcontext = context;
         mLineChart = lineChart;
         drawTheChartByMPAndroid();
@@ -70,7 +71,7 @@ public class LineChartDiamonds{
 
         lineChart.setTouchEnabled(true); //可点击
 
-        lineChart.setDragEnabled(true);  //可拖拽
+        lineChart.setDragEnabled(false);  //可拖拽
         lineChart.setScaleEnabled(true);  //可缩放
 
         lineChart.setPinchZoom(false);
@@ -81,7 +82,7 @@ public class LineChartDiamonds{
 
         Legend mLegend = lineChart.getLegend(); //设置标示，就是那个一组y的value的
 
-        mLegend.setForm(Legend.LegendForm.LINE); //样式
+        mLegend.setForm(Legend.LegendForm.CIRCLE); //样式
         mLegend.setFormSize(6f); //字体
         mLegend.setTextColor(Color.BLACK); //颜色
 
@@ -102,7 +103,7 @@ public class LineChartDiamonds{
         axisLeft.setTextSize(10f); //字体大小
         //axisLeft.setAxisMaximum(100000); //最大值
         axisLeft.setAxisMinimum(0f);
-        axisLeft.setLabelCount(8, true); //显示格数
+        axisLeft.setLabelCount(7, true); //显示格数
         axisLeft.setGridColor(Color.BLACK); //网格线颜色
         axisLeft.setTypeface(mTf);
 
@@ -194,7 +195,7 @@ public class LineChartDiamonds{
 
     public void refresh(){
         list.clear();
-        list.addAll(db.getAllLogs("ASC"));
+        list.addAll(db.get7Logs("ASC"));
         setXdate();
         mLineChart.notifyDataSetChanged();
         drawTheChartByMPAndroid();

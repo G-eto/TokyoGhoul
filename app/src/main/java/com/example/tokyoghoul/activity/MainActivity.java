@@ -162,6 +162,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
+        mview = navigationView;
         tips = new SVProgressHUD(this);
         ackViewId = 3;
         db = new DatabaseHelper(this);
@@ -467,6 +468,10 @@ public class MainActivity extends AppCompatActivity
                     myAccountRecycleAdapter.showNoteDialog(false, new Account(), view_account, -1);
                     break;
                 case 3 :
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(mview.getWindowToken(), 0);
+                    }
                     TimePickerView pvTime = new TimePickerBuilder(this, new OnTimeSelectListener() {
                         @Override
                         public void onTimeSelect(Date date, View v) {
@@ -524,7 +529,8 @@ public class MainActivity extends AppCompatActivity
                             "此app为学习兴趣交流而开发，不做商业用途;" +
                             "为保证隐私安全，除了反馈需要上传反馈内容，其他数据均存储在本地;\n" +
                             "如何联系：投稿反馈(大佬们别打我)\n" +
-                            "ps:反馈的联系方式由用户自愿填写。\n更多请阅读服务协议。";
+                            "ps:反馈的联系方式由用户自愿填写。\n更多请阅读服务协议。\n"+
+                            "联系QQ:1797202283";
             new AlertView("关于", about, new String("确定"), null , null, this,
                     AlertView.Style.Alert, null).show();
         }else if (id == R.id.nav_data) {

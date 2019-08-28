@@ -42,13 +42,13 @@
         <item>其他</item>
     </string-array>
 
-    <string name="tool_psp">大神攻略</string>
+    <string name="tool_psp">玩家攻略</string>
     <string name="tool_story">同人故事</string>
     <string name="tool_play">往期活动</string>
     <string name="tool_rune">奥义查询</string>
     <string name="tool_record">我的手记</string>
     <string name="title_item_list"> </string>
     <string name="title_item_detail">Item Detail</string>
-    <string name="title_activity_rune">奥义查询</string>
+    <string name="title_activity_rune">角色奥义</string>
 
 </resources>

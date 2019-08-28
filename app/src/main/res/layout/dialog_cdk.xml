@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/shape_corner">
+
+    <TextView android:id="@+id/dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_s"
+        android:fontFamily="sans-serif-medium"
+        android:lineSpacingExtra="8sp"
+        android:text="CDK兑换码"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:textColor="#000"
+        android:textSize="20dp"
+        android:textStyle="normal" />
+
+    <RelativeLayout
+        android:id="@+id/layout_1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dialog_h"
+        android:layout_marginLeft="@dimen/margin_xm"
+        android:layout_marginRight="@dimen/margin_xm"
+        android:layout_marginTop="@dimen/margin_s"
+        android:layout_below="@id/dialog_title">
+        <TextView
+            android:layout_width="@dimen/dialog_icon"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:id="@+id/text_id"
+            android:hint="CDK"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/text_id"
+            android:layout_centerVertical="true"
+            android:id="@+id/input_cdk"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dialog_h"
+        android:layout_marginLeft="@dimen/margin_xm"
+        android:layout_marginRight="@dimen/margin_xm"
+        android:layout_marginTop="@dimen/margin_s"
+        android:layout_below="@id/layout_1">
+        <TextView
+            android:layout_width="@dimen/dialog_icon"
+            android:id="@+id/text_name"
+            android:layout_centerVertical="true"
+            android:layout_height="wrap_content"
+            android:hint="描述"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/text_name"
+            android:maxLength="@integer/max_name_length"
+            android:id="@+id/input_cdk_text"/>
+    </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_below="@id/layout_2"
+        android:background="#000"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_2">
+        <Button
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_marginTop="@dimen/margin_s_1"
+            android:id="@+id/dialog_cdk_cancel"
+            android:hint="取消"
+            android:textSize="@dimen/button_font_size"
+            android:textColorHint="@color/bule_ios"
+            android:background="#FFF"
+            android:layout_height="wrap_content" />
+        <View
+            android:layout_width="1px"
+            android:layout_height="match_parent"
+            android:background="#000"
+            android:orientation="vertical"/>
+        <Button
+            android:layout_weight="1"
+            android:id="@+id/dialog_cdk_save"
+            android:layout_marginTop="@dimen/margin_s_1"
+            android:layout_width="0dp"
+            android:hint="保存"
+            android:textColorHint="@color/bule_ios"
+            android:textSize="@dimen/button_font_size"
+            android:background="#FFF"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+
+</RelativeLayout>

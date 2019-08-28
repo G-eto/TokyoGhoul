@@ -1,5 +1,7 @@
 package com.example.tokyoghoul.database.model;
 
+import com.example.tokyoghoul.activity.dummy.DummyContent;
+
 public class CDKs {
     public static final String TABLE_NAME = "cdks";
 
@@ -59,5 +61,9 @@ public class CDKs {
 
     public String getCdk_text() {
         return cdk_text;
+    }
+
+    public DummyContent.DummyItem toDummyItem(){
+        return new DummyContent.DummyItem(id+"", cdk, cdk_text, cdk_date);
     }
 }

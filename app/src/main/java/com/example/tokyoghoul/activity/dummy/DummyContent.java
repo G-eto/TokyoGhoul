@@ -1,5 +1,6 @@
 package com.example.tokyoghoul.activity.dummy;
 
+import com.example.tokyoghoul.database.model.CDKs;
 import com.example.tokyoghoul.database.model.Psp;
 
 import java.util.ArrayList;
@@ -94,6 +95,10 @@ public class DummyContent {
 
         public Psp toPsp(){
             return new Psp(title, kind, under_2, under_1, detail, web_id, web_edition);
+        }
+
+        public CDKs toCDK(){
+            return new CDKs(Integer.parseInt(id), title, under_1, under_2);
         }
 
         @Override

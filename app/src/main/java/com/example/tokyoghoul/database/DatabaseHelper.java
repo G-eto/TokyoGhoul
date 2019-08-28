@@ -230,6 +230,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /*
+    get 7 logs
+     */
+    public List<Logs> get7Logs(String sort){
+        String sql = "SELECT * FROM " + Logs.TABLE_NAME + " ORDER BY " + Logs.COLUMN_DATE + " " + sort;
+        List<Logs> logs = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(sql, null);
+
+        int op = 0;
+        if(cursor.moveToLast()){
+            do{
+                Logs log = new Logs();
+                log.setId(cursor.getInt(cursor.getColumnIndex(Logs.COLUMN_ID)));
+                log.setDate(cursor.getString(cursor.getColumnIndex(Logs.COLUMN_DATE)));
+                log.setOnlineTime(cursor.getInt(cursor.getColumnIndex(Logs.COLUMN_ONLINETIME)));
+                log.setDiamondsAll(cursor.getInt(cursor.getColumnIndex(Logs.COLUMN_DIAMONDSALL)));
+                log.setDiamondsIncome(cursor.getInt(cursor.getColumnIndex(Logs.COLUMN_DIAMONDSINCOME)));
+                logs.add(log);
+                op++;
+            }while (cursor.moveToPrevious() && op < 7);
+        }
+        db.close();
+        List<Logs> logs1 = new ArrayList<>();
+        for(int i = logs.size() - 1; i >= 0; i--){
+            logs1.add(logs.get(i));
+        }
+
+        return logs1;
+    }
+
+    /*
     get number of logs
      */
     public int getLogCount(){
