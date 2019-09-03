@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.tokyoghoul.activity.dummy.DummyContent;
 import com.example.tokyoghoul.database.model.Account;
 import com.example.tokyoghoul.database.model.CDKs;
 import com.example.tokyoghoul.database.model.CommunityManage;
@@ -17,10 +18,17 @@ import com.example.tokyoghoul.database.model.Role;
 import com.example.tokyoghoul.database.model.Upload;
 import com.example.tokyoghoul.tool.Gadget;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.tokyoghoul.tool.HtmlService.getJsondataFromWeb;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -49,7 +57,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //        db.execSQL(CDKs.CREATE_TABLE);
 
 
-        //initRoleTable(mcontext);
+        initRoles(mcontext);
     }
 
     @Override
@@ -744,7 +752,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
     //get all
     public List<Psp> getAllPsps(){
-        String sql = "SELECT * FROM " + Psp.TABLE_NAME ;
+        String sql = "SELECT * FROM " + Psp.TABLE_NAME + " ORDER BY " + Psp.COLUMN_PSP_ID + " DESC";
         List<Psp> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(sql, null);
@@ -885,13 +893,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public static void initRoleTable(final Context context, final String sql) {
+    public static void initRoleTable1(final Context context, final String sql) {
         //final String REMOTE_IP = "ghfuuto7.2392lan.dnstoo.com:3306";
-        final String URL = "jdbc:mysql://ghfuuto7.2392.dnstoo.com:5504/wakof8" +
+        final String URL = "jdbc:mysql://" +
                 "?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true&autoReconnect=true";
 
-        final String USER = "wakof8_f";
-        final String PASSWORD = "n549tjkt";
+        final String USER = "";
+        final String PASSWORD = "";
 
         new Thread(new Runnable() {
             public void run() {
@@ -901,8 +909,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 System.out.println("All users info:");
                 if(sql.equals("select * from role"))
                     Gadget.query(conn, sql, context);
-                else
+                else {
                     Gadget.queryUpload(conn, sql, context);
+
+                }
                 if (conn != null) {
                     try {
                         conn.close();
@@ -915,6 +925,59 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }).start();
 
+    }
+
+    public static void initRoles(final Context context){
+        final Thread thread=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = "";
+                url = "get_all_roles.php";
+                String jsondata = getJsondataFromWeb(url, "");
+
+                DatabaseHelper db = new DatabaseHelper(context);
+                db.deleteAllRoles();
+                db.insertRoles(getJson(jsondata));
+            }
+        });
+
+        thread.start();
+    }
+
+    private static List<Role> getJson(String jsonStr) {
+        JSONObject dataJson = null;
+        List<Role> list = new ArrayList<>();
+        Log.d("sss:", jsonStr);
+        try {
+            dataJson = new JSONObject(jsonStr);
+            Log.i("json", jsonStr);
+//            JSONObject response=dataJson.getJSONObject("");
+            if (!jsonStr.equals("")) {
+                JSONArray data = dataJson.getJSONArray("roles");
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject info = data.getJSONObject(i);
+                    int id = info.getInt("id");
+                    byte[] img = new byte[0];
+                    String name = info.getString("name");
+                    String kind = info.getString("kind");
+                    String level = info.getString("level");
+                    String stone_1 = info.getString("stone_1");
+                    String stone_2 = info.getString("stone_2");
+                    String rune_1 = info.getString("rune_1");
+                    String rune_2 = info.getString("rune_2");
+                    String rune_3 = info.getString("rune_3");
+                    String rune_4 = info.getString("rune_4");
+                    String rune_suit = info.getString("rune_suit");
+                    //System.out.println(title + time + kind + author + content);
+                    list.add(new Role(id, img, name, kind, level, stone_1, stone_2,
+                            rune_1, rune_2, rune_3, rune_4, rune_suit, ""));
+                }
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
 }

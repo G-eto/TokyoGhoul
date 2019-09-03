@@ -117,7 +117,8 @@ public class Gadget {
                     System.out.print(result.getString(kindColumnIndex) + "\t\t");
                     System.out.println(result.getString(nameColumnIndex));
 
-                    roleList.add(new Role(result.getInt(idColumnIndex), result.getBytes(imgColumnIndex), result.getString(nameColumnIndex),
+                    roleList.add(new Role(result.getInt(idColumnIndex), result.getBytes(imgColumnIndex),
+                            result.getString(nameColumnIndex),
                             result.getString(kindColumnIndex), result.getString(levelColumnIndex),
                             result.getString(stone_1ColumnIndex), result.getString(stone_2ColumnIndex),
                             result.getString(rune_1_ColumnIndex), result.getString(rune_2_ColumnIndex),

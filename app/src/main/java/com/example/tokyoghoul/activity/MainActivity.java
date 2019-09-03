@@ -55,6 +55,7 @@ import com.example.tokyoghoul.database.model.CommunityManage;
 import com.example.tokyoghoul.database.model.Logs;
 import com.example.tokyoghoul.database.model.Upload;
 import com.example.tokyoghoul.tool.DateUtil;
+//import com.example.tokyoghoul.tool.HtmlService;
 import com.example.tokyoghoul.tool.HtmlService;
 import com.example.tokyoghoul.view.FirstFragment;
 import com.example.tokyoghoul.view.LineChartDiamonds;
@@ -149,7 +150,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DatabaseHelper.initRoleTable(this, "select * from role");
+        //DatabaseHelper.initRoleTable(this, "select * from role");
+        //DatabaseHelper.initRoles(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -607,50 +609,50 @@ public class MainActivity extends AppCompatActivity
         lineChart.refreshDrawableState();
     }
 
-    private void reFreshData(){
-        DummyContent.setVisitFlag(true);
-        DummyContent.ITEMS.clear();
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String url = "";
-                if(marks == 2){
-                    url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_psp.json";
-                }
-                //play
-                else if(marks == 3){
-                    url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_activity.json";
-                }
-                //cdk
-                else if(marks == 4){
-                    url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_cdk.json";
-                }
-
-                Log.d("url:"+marks+"  ",url);
-                int op = 0;
-                jsondata = "";
-                while (jsondata.equals("")) {
-                    if(++op > 10){
-                        Log.d("请求失败","try 10 times");
-                        break;
-                    }
-                    try {
-                        jsondata = HtmlService.getHtml(url);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                DummyContent.ITEMS.addAll(getJsons(jsondata));
-                DummyContent.setVisitFlag(false);
-                tips.dismiss();
-            }
-
-        });
-        DummyContent.setVisitFlag(true);
-        thread.start();
-        //while (DummyContent.isVisit()){}
-        //tips.dismiss();
-    }
+//    private void reFreshData(){
+//        DummyContent.setVisitFlag(true);
+//        DummyContent.ITEMS.clear();
+//        Thread thread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                String url = "";
+//                if(marks == 2){
+//                    url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_psp.json";
+//                }
+//                //play
+//                else if(marks == 3){
+//                    url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_activity.json";
+//                }
+//                //cdk
+//                else if(marks == 4){
+//                    url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_cdk.json";
+//                }
+//
+//                Log.d("url:"+marks+"  ",url);
+//                int op = 0;
+//                jsondata = "";
+//                while (jsondata.equals("")) {
+//                    if(++op > 10){
+//                        Log.d("请求失败","try 10 times");
+//                        break;
+//                    }
+//                    try {
+//                        jsondata = HtmlService.getHtml(url);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                DummyContent.ITEMS.addAll(getJsons(jsondata));
+//                DummyContent.setVisitFlag(false);
+//                tips.dismiss();
+//            }
+//
+//        });
+//        DummyContent.setVisitFlag(true);
+//        thread.start();
+//        //while (DummyContent.isVisit()){}
+//        //tips.dismiss();
+//    }
 
     private List<DummyContent.DummyItem> getJsons(String jsonStr){
         JSONObject dataJson = null;
@@ -768,8 +770,20 @@ public class MainActivity extends AppCompatActivity
                     //TODO update
                     String sql = "insert into feedback(summary, content, kind, tel) " +
                             "values ('"+buf.getTitle()+"','"+buf.getText()+"','"+buf.getKind()+"','"+buf.getPhone()+"')";
-                    DatabaseHelper.initRoleTable(context, sql);
-
+                    //DatabaseHelper.initRoleTable(context, sql);
+                    JSONObject obj = new JSONObject();
+                    try {
+                        obj.put("ip", HtmlService.getIP());
+                        obj.put("summary",buf.getTitle());
+                        obj.put("content", buf.getText());
+                        obj.put("kind", buf.getKind());
+                        obj.put("tel", buf.getPhone());
+                        Log.i("ip:",HtmlService.getIP());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    final String url = "upload_back.php";
+                    HtmlService.addFeedback(url, obj);
                 }
                 alertDialog.dismiss();
             }

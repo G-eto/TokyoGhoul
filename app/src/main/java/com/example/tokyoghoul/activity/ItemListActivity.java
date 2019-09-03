@@ -68,6 +68,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static com.example.tokyoghoul.tool.HtmlService.getJsondataFromWeb;
+
 /**
  * An activity representing a list of Items. This activity
  * has different presentations for handset and tablet-size devices. On
@@ -666,7 +668,7 @@ public class ItemListActivity extends AppCompatActivity {
                 psp_buf.setPsp_title(inputTitle.getText().toString());
                 psp_buf.setPsp_kind(inputKind.getText().toString());
                 psp_buf.setPsp_text(inputText.getText().toString());
-                psp_buf.setPsp_time(DateUtil.getDateTime());
+                psp_buf.setPsp_time(DateUtil.getDateMySql());
                 DatabaseHelper db = new DatabaseHelper(recyclerView.getContext());
 
                 if(shouldUpdate){
@@ -770,16 +772,17 @@ public class ItemListActivity extends AppCompatActivity {
                 String url = "";
                 if(mark.equals(way[1])){
                     mark_id = 1;
-                    /*
-                    url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_psp.json";
+
+                    //url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_psp.json";
+                    url = "get_all_psps.php";
                     jsondata_psp = getJsondataFromWeb(url, jsondata_psp);
                     jsondata = jsondata_psp;
                     Log.d("urls:",url);
 
                     DummyContent.ITEMS.addAll(getJson(jsondata));
                     DummyContent.setVisitFlag(false);
-                    */
-                    refreshPSP("select * from psp order by time DESC");
+
+                    //refreshPSP("select * from psp order by time DESC");
                 }
                 //play
                 else if(mark.equals(way[2])){
@@ -793,15 +796,17 @@ public class ItemListActivity extends AppCompatActivity {
                     DummyContent.setVisitFlag(false);
                 }
                 //cdk
-                callUIrefresh();
-
-                if(mark.equals(way[3])){
+                else if(mark.equals(way[3])){
                     mark_id = 3;
                     //url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_cdk.json";
-                    //jsondata_cdk = getJsondataFromWeb(url, jsondata_cdk);
-                    refreshCDK("select * from cdk order by date DESC");
-                    //jsondata = jsondata_cdk;
+                    url = "get_all_cdks.php";
+                    jsondata_cdk = getJsondataFromWeb(url, jsondata_cdk);
+                    //refreshCDK("select * from cdk order by date DESC");
+                    jsondata = jsondata_cdk;
+                    DummyContent.ITEMS.addAll(getJson(jsondata));
+                    DummyContent.setVisitFlag(false);
                 }
+                callUIrefresh();
 
 
             }
@@ -811,33 +816,15 @@ public class ItemListActivity extends AppCompatActivity {
         thread.start();
     }
 
-    private String getJsondataFromWeb(String url, String s){
-        int op = 0;
-        if(!s.equals("")){
-            return s;
-        }
-        String jsd = "";
-        while (jsd.equals("")) {
-            if(++op > 10){
-                Log.d("请求失败","try 10 times");
-                break;
-            }
-            try {
-                jsd = HtmlService.getHtml(url);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return jsd;
-    }
+
 
     private static void refreshCDK(final String sql) {
         //final String REMOTE_IP = "ghfuuto7.2392lan.dnstoo.com:3306";
-        final String URL = "jdbc:mysql://ghfuuto7.2392.dnstoo.com:5504/wakof8" +
+        final String URL = "jdbc:mysql://" +
                 "?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true&autoReconnect=true";
 
-        final String USER = "wakof8_f";
-        final String PASSWORD = "n549tjkt";
+        final String USER = "";
+        final String PASSWORD = "";
 
         new Thread(new Runnable() {
             public void run() {
@@ -943,11 +930,11 @@ public class ItemListActivity extends AppCompatActivity {
 
     private static void mySqlCDK(final String sql) {
         //final String REMOTE_IP = "ghfuuto7.2392lan.dnstoo.com:3306";
-        final String URL = "jdbc:mysql://ghfuuto7.2392.dnstoo.com:5504/wakof8" +
+        final String URL = "jdbc:mysql://" +
                 "?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true&autoReconnect=true";
 
-        final String USER = "wakof8_f";
-        final String PASSWORD = "n549tjkt";
+        final String USER = "";
+        final String PASSWORD = "";
 
         new Thread(new Runnable() {
             public void run() {
@@ -999,11 +986,11 @@ public class ItemListActivity extends AppCompatActivity {
 
     private static void refreshPSP(final String sql) {
         //final String REMOTE_IP = "ghfuuto7.2392lan.dnstoo.com:3306";
-        final String URL = "jdbc:mysql://ghfuuto7.2392.dnstoo.com:5504/wakof8" +
+        final String URL = "jdbc:mysql://" +
                 "?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true&autoReconnect=true";
 
-        final String USER = "wakof8_f";
-        final String PASSWORD = "n549tjkt";
+        final String USER = "";
+        final String PASSWORD = "";
 
         new Thread(new Runnable() {
             public void run() {
