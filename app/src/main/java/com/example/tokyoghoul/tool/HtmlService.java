@@ -26,6 +26,8 @@ import java.net.SocketException;
 import java.net.URL;
 import java.util.Enumeration;
 
+import javax.net.ssl.HttpsURLConnection;
+
 public class HtmlService {
 
     public static String getHtml(String path) throws Exception {
