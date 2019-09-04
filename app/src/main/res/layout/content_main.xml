@@ -195,6 +195,29 @@
                     android:layout_height="wrap_content" />
             </RelativeLayout>
 
+            <!--反馈-->
+            <RelativeLayout
+                android:id="@+id/tool_layout_feedback"
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/margin_m"
+                android:layout_height="@dimen/vitality">
+                <ImageView
+                    android:id="@+id/tool_img_feedback"
+                    android:layout_marginLeft="@dimen/margin_m"
+                    android:layout_width="@dimen/img_width"
+                    android:src="@drawable/huodong"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"/>
+                <TextView
+                    android:layout_toRightOf="@id/tool_img_feedback"
+                    android:id="@+id/tool_text_feedback"
+                    android:layout_marginLeft="@dimen/margin_m"
+                    android:text="@string/tool_play"
+                    android:layout_width="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
         </LinearLayout>
 
 

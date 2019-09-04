@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity
             R.drawable.shetuan, R.drawable.zhanghao_2};
     //Tab标题
     private String[] title = new String[]{"首页", "娱乐", "游戏", "我的"};
-    private String[] way = new String[]{"record", "psp", "play", "cdk"};
+    private String[] way = new String[]{"record", "psp", "play", "cdk", "feedback"};
 
     private ViewPager viewPager_community;
     private TabLayout tabLayout_community;
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity
 
     //tool
     private RelativeLayout tool_record;
-    private RelativeLayout tool_rune;
+    private RelativeLayout tool_feedback;
     private RelativeLayout tool_psp;
     private RelativeLayout tool_play;
     private RelativeLayout tool_story;
@@ -307,6 +307,7 @@ public class MainActivity extends AppCompatActivity
         tool_psp = findViewById(R.id.tool_layout_psp);
         tool_play = findViewById(R.id.tool_layout_play);
         tool_story = findViewById(R.id.tool_layout_story);
+        tool_feedback = findViewById(R.id.tool_layout_feedback);
 
         //手记
         tool_record.setOnClickListener(new View.OnClickListener() {
@@ -333,12 +334,20 @@ public class MainActivity extends AppCompatActivity
                 intentToListActivity(3);
             }
         });
-        //同人故事
+        //同人故事 cdk?
         tool_story.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 marks = 4;
                 intentToListActivity(4);
+            }
+        });
+        //反馈
+        tool_feedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                marks = 5;
+                intentToListActivity(5);
             }
         });
     }

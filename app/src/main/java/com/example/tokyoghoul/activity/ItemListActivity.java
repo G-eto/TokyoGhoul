@@ -87,8 +87,8 @@ public class ItemListActivity extends AppCompatActivity {
     private boolean mTwoPane;
     private static String mark = "";
     private static int mark_id = -1;
-    private String[] way = new String[]{"record", "psp", "play", "cdk"};
-    private String[] Title = new String[]{"我的手记", "玩家攻略", "活动记录", "兑换码"};
+    private String[] way = new String[]{"record", "psp", "play", "cdk", "feedback"};
+    private String[] Title = new String[]{"我的手记", "玩家攻略", "活动记录", "兑换码", "反馈管理"};
     DatabaseHelper db;
     public static RecyclerView recyclerView;
 
@@ -96,9 +96,11 @@ public class ItemListActivity extends AppCompatActivity {
     private static String jsondata_psp = "";
     private static String jsondata_play = "";
     private static String jsondata_cdk = "";
+    private static String jsondata_feedback = "";
 
     private static List<DummyContent.DummyItem> cdkBuf= new ArrayList<>();
     private static List<DummyContent.DummyItem> pspBuf= new ArrayList<>();
+    private static List<DummyContent.DummyItem> feedback = new ArrayList<>();
 
     private static ClipboardManager cm;
     private static ClipData mClipData;
@@ -141,6 +143,11 @@ public class ItemListActivity extends AppCompatActivity {
         else if(mark.equals(way[3])){
             mark_id = 3;
         }
+        //feedback
+        else if(mark.equals(way[4])){
+            mark_id = 4;
+        }
+        Log.i("markid"," "+mark_id);
         toolbar.setTitle(Title[mark_id]);
 
 
@@ -211,7 +218,7 @@ public class ItemListActivity extends AppCompatActivity {
         if(mark_id == 3) {
             getMenuInflater().inflate(R.menu.main, menu);
             menu.findItem(R.id.action_search).setVisible(false);
-            menu.findItem(R.id.action_todo).setVisible(false);
+            //menu.findItem(R.id.action_todo).setVisible(false);
         }
         return true;
     }
@@ -522,6 +529,19 @@ public class ItemListActivity extends AppCompatActivity {
                     }
                 });
             }
+            else if(mark_id == 4){
+                holder.star.setVisibility(View.VISIBLE);
+                holder.star.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //todo update
+                        String sql = "UPDATE `feedback` SET `state`='已处理' WHERE id = "+ DummyContent.ITEMS.get(holder.getAdapterPosition()).id;
+                        mySqlCDK(sql);
+                        Gadget.showToast("已处理", view.getContext());
+                        recyclerView.getAdapter().notifyDataSetChanged();
+                    }
+                });
+            }
 
             //holder.itemView.setTag(mValues.get(position));
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -611,6 +631,22 @@ public class ItemListActivity extends AppCompatActivity {
 
 //                    System.out.println(title + time + kind + author + content);
                     list.add(new DummyContent.DummyItem(String.valueOf(id), cdk, content, date));
+                }
+            }
+            else if(mark_id == 4){
+                JSONArray data = dataJson.getJSONArray("feedback");
+                for(int i = 0; i < data.length(); i++) {
+                    JSONObject info = data.getJSONObject(i);
+                    String title = info.getString("summary");
+                    String kind = info.getString("kind");
+                    String time_s = info.getString("state");
+                    String time_e = info.getString("timestamp");
+                    String content = info.getString("content");
+                    String ip = "ip:"+info.getString("ip") +"  \n";
+                    String tel = "联系方式"+info.getString("tel") +"  \n";
+                    int id = info.getInt("id");
+                    System.out.println(title + time_s + kind + time_e + content);
+                    list.add(new DummyContent.DummyItem(id+"", title, kind, time_s, time_e, ip+tel+content, id, 0));
                 }
             }
         } catch (JSONException e) {
@@ -793,16 +829,18 @@ public class ItemListActivity extends AppCompatActivity {
                     DummyContent.setVisitFlag(false);
                 }
                 //cdk
-                callUIrefresh();
-
-                if(mark.equals(way[3])){
+                else if(mark.equals(way[3])){
                     mark_id = 3;
                     //url = "https://raw.githubusercontent.com/G-eto/TokyoGhoul/master/data_cdk.json";
                     //jsondata_cdk = getJsondataFromWeb(url, jsondata_cdk);
                     refreshCDK("select * from cdk order by date DESC");
                     //jsondata = jsondata_cdk;
                 }
-
+                else if(mark.equals(way[4])){
+                    mark_id = 4;
+                    refreshFeedback("select * from feedback order by timestamp DESC");
+                }
+                callUIrefresh();
 
             }
 
@@ -1078,6 +1116,111 @@ public class ItemListActivity extends AppCompatActivity {
                 Log.d("mysql1","66");
                 DummyContent.ITEMS.clear();
                 DummyContent.ITEMS.addAll(pspBuf);
+                callUIrefresh();
+                Log.d("mysql1","777");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (result != null) {
+                    result.close();
+                    result = null;
+                }
+                if (statement != null) {
+                    statement.close();
+                    statement = null;
+                }
+
+            } catch (SQLException sqle) {
+
+            }
+        }
+        return true;
+    }
+
+    private static void refreshFeedback(final String sql) {
+        //final String REMOTE_IP = "ghfuuto7.2392lan.dnstoo.com:3306";
+        final String URL = "jdbc:mysql://ghfuuto7.2392.dnstoo.com:5504/wakof8" +
+                "?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true&autoReconnect=true";
+
+        final String USER = "wakof8_f";
+        final String PASSWORD = "n549tjkt";
+
+        new Thread(new Runnable() {
+            public void run() {
+                System.out.println("bbbbbbb");
+                Connection conn;
+                conn = Gadget.openConnection(URL, USER, PASSWORD);
+                System.out.println("All users info:");
+                queryFeedback(conn, sql);
+                if (conn != null) {
+                    try {
+                        conn.close();
+                    } catch (SQLException e) {
+                        conn = null;
+                    } finally {
+                        conn = null;
+                    }
+                }
+            }
+        }).start();
+
+    }
+
+    public static boolean queryFeedback(Connection conn, String sql) {
+
+        if (conn == null) {
+            return false;
+        }
+        Log.d("mysql1","44");
+
+        Statement statement = null;
+        ResultSet result = null;
+
+        //List<DummyContent.DummyItem> mlist = new ArrayList<>();
+        try {
+            statement = conn.createStatement();
+            result = statement.executeQuery(sql);
+
+
+            result.last();
+            int count = result.getRow(); //获得ResultSet的总行数
+
+            Log.d("mysql1",count+"个web");
+            int count_local = feedback.size();
+            Log.d("mysql1",count+"个local");
+            if(count <= count_local){
+                DummyContent.ITEMS.clear();
+                DummyContent.ITEMS.addAll(feedback);
+                callUIrefresh();
+                return true;
+            }
+
+            if (result != null && result.first()) {
+                int idColumnIndex = result.findColumn("id");
+                int kindColumnIndex = result.findColumn("kind");
+                int titleColumnIndex = result.findColumn("summary");
+                int authorColumnIndex = result.findColumn("timestamp");
+                int contentColumnIndex = result.findColumn("content");
+                int timeColumnIndex = result.findColumn("state");
+                int ipColumnIndex = result.findColumn("ip");
+                int telColumnIndex = result.findColumn("tel");
+
+                Log.d("mysql1",55+result.toString());
+                System.out.println("id\t\t" + "name");
+                while (!result.isAfterLast()) {
+                    feedback.add(new DummyContent.DummyItem(String.valueOf(result.getInt(idColumnIndex)),
+                            result.getString(titleColumnIndex), result.getString(kindColumnIndex),
+                            result.getString(authorColumnIndex), result.getString(timeColumnIndex),
+                            " 联系方式 "+result.getString(telColumnIndex)+" ip:"+result.getString(ipColumnIndex)+" "+result.getString(contentColumnIndex),
+                            result.getInt(idColumnIndex), 0));
+                    //String.valueOf(id), title, kind, author, time, content, id, edition)
+                    result.next();
+                }
+                Log.d("mysql1","66");
+                DummyContent.ITEMS.clear();
+                DummyContent.ITEMS.addAll(feedback);
                 callUIrefresh();
                 Log.d("mysql1","777");
             }
