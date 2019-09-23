@@ -782,6 +782,7 @@ public class MainActivity extends AppCompatActivity
                     //DatabaseHelper.initRoleTable(context, sql);
                     JSONObject obj = new JSONObject();
                     try {
+                        obj.put("usr_id",0);
                         obj.put("ip", HtmlService.getIP());
                         obj.put("summary",buf.getTitle());
                         obj.put("content", buf.getText());

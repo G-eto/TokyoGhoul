@@ -895,11 +895,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static void initRoleTable1(final Context context, final String sql) {
         //final String REMOTE_IP = "ghfuuto7.2392lan.dnstoo.com:3306";
-        final String URL = "jdbc:mysql://" +
+        final String URL = "jdbc:mysql://ghfuuto7.2392.dnstoo.com:5504/wakof8" +
                 "?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true&autoReconnect=true";
 
-        final String USER = "";
-        final String PASSWORD = "";
+        final String USER = "wakof8_f";
+        final String PASSWORD = "n549tjkt";
 
         new Thread(new Runnable() {
             public void run() {
